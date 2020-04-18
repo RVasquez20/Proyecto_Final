@@ -1,4 +1,5 @@
 # depslib dependency file v1.0
-1587097732 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
+1587253073 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
 	<librerias.h>
+	<time.h>
 
