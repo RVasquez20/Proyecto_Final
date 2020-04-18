@@ -7,10 +7,33 @@ char CT = 203, LTI = 204, H = 205, CRUZ = 206, CB = 202, EIA = 201, EIB = 200, L
 #define arriva cout << LTI << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CT<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<LTD << endl;
 #define separador cout << LTI << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CRUZ<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< LTD << endl;
 #define abajo cout << LTI  << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CB<< H<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<LTD<< endl;
+struct Marcas{
+int idMarca;
+char NombreMarca[50];
+};
+struct Productos{
+int idProducto,idMarca;
+char DescripcionProducto[100];
+double PrecioCosto,PrecioVenta;
+};
+struct Clientes{
+int NIT;
+char NombreCliente[50],DireccionCliente[50];
+};
+struct Factura{
+int NoFactura,NITFactura;
+};
+struct FacturaDetalle{
+int idFacturaDetalle,idProductos,NoFactura;
+double PrecioVenta,Total;
+};
+
+
 void Menu();
 
 void Menu(){
 char opc;
+Productos Producto;
      SetConsoleTitle("Menu Principal");
      system("CLS");
          gotoxy(35, 7);
@@ -20,11 +43,11 @@ char opc;
      gotoxy(35, 9);
      AREN;
      gotoxy(35, 10);
-     cout << V << "                 1)Sumar                          " << V << endl;
+     cout << V << "                 1)                         " << V << endl;
      gotoxy(35, 11);
-     cout << V << "                 2)Restar                         " << V << endl;
+     cout << V << "                 2)                     " << V << endl;
      gotoxy(35, 12);
-     cout << V << "                 3)Multiplicar                    " << V << endl;
+     cout << V << "                 3)                       " << V << endl;
      gotoxy(35, 13);
      cout << V << "                 4)Dividir                        " << V << endl;
      gotoxy(35, 14);
@@ -73,16 +96,12 @@ char opc;
      }
 
 main(){
-SetConsoleTitle("RV Machine");
+/*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
-     cout << "" << endl;
-     cout << "" << endl;
-     cout << "" << endl;
-     cout << "" << endl;
-     cout << "" << endl;
-     cout << "\n\n\n\t\t\t\t             Bienvenidos al Programa \n\n";
-     cout << "\n\t\t\t\t            Hecho por Rodrigo Vasquez\n\n";
-     cout << "\n\t\t\t\t\t\tRV.Enterprices\n\n";
+     gotoxy(40,10);cout << "Bienvenidos al Programa WEEKEND PLACE"<<endl;
+     gotoxy(45,11);cout << "Hecho por: Rodrigo Vasquez"<<endl;
+     gotoxy(50,12);cout << "RV.Enterprices"<<endl;
+     cout<<endl;
      char a = 177, b = 219;
      cout << "\t\t\t\t";
      for (int i = 0; i <= 50; i++)
@@ -95,6 +114,6 @@ SetConsoleTitle("RV Machine");
           Sleep(200);
      }
      system("CLS");
-
+*/
 Menu();
 }
