@@ -159,7 +159,7 @@ char opc;
      gotoxy(35, 14);
      ARENBJ;
      gotoxy(35, 15);
-     cout << V << "                  <-- Regresar                    " << V << endl;
+     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
      gotoxy(35, 16);
      ABJ;
      gotoxy(35, 17);
@@ -289,12 +289,30 @@ fflush(stdin);
           if(AuxIdMarca==Marca.idMarca){
           cout<<"Id_Marca: "<<Marca.idMarca<<endl;
           cout<<"Nombre:    "<<Marca.NombreMarca<<endl<<endl;
+          getch();
           int pos=ftell(ArchivoMarcas)-sizeof(Marcas);
-          fseek(ArchivoMarcas,pos,SEEK_SET);
+
           fflush(stdin);
+          loop:
+          system("CLS");
+
           cout<<"Ingrese el Id Nuevo"<<endl;
-     cin>>Marca.idMarca;
+     cin>>aux2;
+     rewind(ArchivoMarcas);
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+          while(!feof(ArchivoMarcas)){
+          if(aux2==Marca.idMarca){
+          cout<<"Id Ya Existente"<<endl;
+          getch();
+          goto loop;
+          }
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+          }
+          fflush(stdin);
+
+          Marca.idMarca=aux2;
      fflush(stdin);
+     fseek(ArchivoMarcas,pos,SEEK_SET);
      cout<<"Ingrese El Nombre Nuevo"<<endl;
      cin.getline(Marca.NombreMarca,50,'\n');
      fflush(stdin);
