@@ -15,10 +15,16 @@ char NombreMarca[50];
 };
 typedef Marcas Marca;
 
+struct fecha{
+int d,m,a,hh,mm,ss;
+};
+typedef fecha Fechas;
+
 struct Productos{
-int idProducto,idMarca;
+int CodigoProducto,idMarca;
 char DescripcionProducto[100];
 double PrecioCosto,PrecioVenta;
+struct fecha FechaDeIngreso;
 };
 typedef Productos Producto;
 
@@ -39,10 +45,7 @@ double PrecioVenta,Total;
 };
 typedef FacturasDetalle FacturaDetalle;
 
-struct fecha{
-int d,m,a,hh,mm,ss;
-};
-typedef fecha Fecha;
+
 //Variables Globales para la fecha y hora
 time_t tSac = time(NULL);
 struct tm* tmP = localtime(&tSac);
@@ -54,6 +57,9 @@ void IngresoDeMarcas();
 void MostrarMarcas();
 void ModificarMarca();
 void EliminarMarca();
+void MenuInventario();
+void IngresoProductos();
+void MostrarProductos();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -113,7 +119,7 @@ char opc;
           }
           case '2':
           {
-              MenuPrincipal();
+              MenuInventario();
                break;
           }
           case '3':
@@ -242,12 +248,12 @@ void IngresoDeMarcas(){
      cin.getline(Marca.NombreMarca,50,'\n');
      fflush(stdin);
      fwrite(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-     cout<<"Guardado Exitosamente"<<endl;
      cout<<"Desea Ingresar Otro Registro? (S/N)"<<endl;
      cin>>opc;
      if(opc=='S'||opc=='s'){
           goto loop;
      }
+     cout<<"Guardado Exitosamente"<<endl;
      fclose(ArchivoMarcas);
 }
 void MostrarMarcas(){
@@ -355,7 +361,6 @@ fflush(stdin);
           existe=1;
           cout<<endl;
           cout<<"Marca Eliminada correctamente"<<endl;
-          getch();
           }else{
           fwrite(&Marca,sizeof(Marcas),1,Temporal);
           fflush(stdin);
@@ -373,4 +378,202 @@ fflush(stdin);
      fclose(ArchivoMarcas);
      remove("Marcas.dat");
      rename("Temporal.dat","Marcas.dat");
+}
+void MenuInventario(){
+char opc;
+     SetConsoleTitle("Menu Inventario");
+     system("CLS");
+         gotoxy(35, 7);
+     ARAR;
+     gotoxy(35, 8);
+     cout << V << "             Menu Principal Inventario            " << V << endl;
+     gotoxy(35, 9);
+     AREN;
+     gotoxy(35, 10);
+     cout << V << "              1. Ingresar Productos               " << V << endl;
+     gotoxy(35, 11);
+     cout << V << "              2. Mostrar Listado de Productos     " << V << endl;
+     gotoxy(35, 12);
+     cout << V << "              3. Modificar Productos              " << V << endl;
+     gotoxy(35, 13);
+     cout << V << "              4. Eliminar Productos               " << V << endl;
+     gotoxy(35, 14);
+     ARENBJ;
+     gotoxy(35, 15);
+     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
+     gotoxy(35, 16);
+     ABJ;
+     gotoxy(35, 17);
+     opc = getch();
+      if (opc == 8)
+     {
+          MenuPrincipal();
+     }
+     else
+     {
+          switch (opc)
+          {
+          case '1':
+          {
+               IngresoProductos();
+               getch();
+               MenuInventario();
+               break;
+          }
+          case '2':
+          {
+               MostrarProductos();
+              getch();
+              MenuInventario();
+               break;
+          }
+          case '3':
+          {
+
+          getch();
+          MenuInventario();
+               break;
+          }
+          case '4':
+          {
+
+               getch();
+               MenuInventario();
+               break;
+          }
+          case 27:{
+          exit(0);
+          break;
+          }
+          default:
+          {
+               cout << "Opcion Incorreta elija de nuevo" << endl;
+               getch();
+              MenuMarcas();
+          }
+          }
+     }
+
+
+}
+void IngresoProductos(){
+ fflush(stdin);
+    Productos Producto;
+    Marcas Marca;
+     char opc;
+
+     int encontrado=0;
+     FILE *ArchivoProductos=fopen("Productos.dat","a+b");
+     FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+loop:
+     rewind(ArchivoProductos);
+     int AuxCodigoProducto,auxIdMarca;
+     int encontrado2=0;
+     system("CLS");
+     fflush(stdin);
+     MostrarMarcas();
+     cout<<"Ingrese el Codigo del Producto"<<endl;
+     cin>>AuxCodigoProducto;
+     fflush(stdin);
+     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+          while(!feof(ArchivoProductos)){
+          if(AuxCodigoProducto==Producto.CodigoProducto){
+          cout<<"El Codigo Ya Existente"<<endl;
+          getch();
+          encontrado2=1;
+
+          }
+           fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+          }
+          if(encontrado2==1){
+               goto loop;
+          }
+          fflush(stdin);
+          Producto.CodigoProducto=AuxCodigoProducto;
+          fflush(stdin);
+     cout<<"Ingrese El Nombre Del Producto"<<endl;
+     cin.getline(Producto.DescripcionProducto,100,'\n');
+     fflush(stdin);
+     loop2:
+          rewind(ArchivoMarcas);
+     fflush(stdin);
+     cout<<"Ingrese el id de la marca del Producto"<<endl;
+     cin>>auxIdMarca;
+     fflush(stdin);
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+          while(!feof(ArchivoMarcas)){
+          if(auxIdMarca==Marca.idMarca){
+         Producto.idMarca=auxIdMarca;
+          fflush(stdin);
+          encontrado=1;
+          }
+
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+
+          }
+          if(encontrado==0){
+               cout<<"Id No Existente"<<endl;
+          getch();
+          goto loop2;
+          }
+          fclose(ArchivoMarcas);
+          fflush(stdin);
+
+          cout<<"Ingrese el precio Costo"<<endl;
+          cin>>Producto.PrecioCosto;
+          fflush(stdin);
+          cout<<"Ingrese el precio Venta"<<endl;
+          cin>>Producto.PrecioVenta;
+          fflush(stdin);
+          int correcto=0;
+          do{
+                    fflush(stdin);
+          cout<<"Ingrese el dia en que entro"<<endl;
+          cin>>Producto.FechaDeIngreso.d;
+          cout<<"Ingrese el Mes en que entro"<<endl;
+          cin>>Producto.FechaDeIngreso.m;
+          cout<<"Ingrese el anio en que entro"<<endl;
+          cin>>Producto.FechaDeIngreso.a;
+          if((Producto.FechaDeIngreso.d>0&&Producto.FechaDeIngreso.d<32)&&(Producto.FechaDeIngreso.m>0&&Producto.FechaDeIngreso.m<13)&&(Producto.FechaDeIngreso.a>2000&&Producto.FechaDeIngreso.a<2100)){
+               correcto=1;
+          }else{
+               cout<<"Formato Incorrecto dd/mm/aaaa"<<endl;
+          }
+          }while(correcto==0);
+     fwrite(&Producto,sizeof(Productos),1,ArchivoProductos);
+     cout<<"Desea Ingresar Otro Registro? (S/N)"<<endl;
+     cin>>opc;
+     if(opc=='S'||opc=='s'){
+          goto loop;
+     }
+     cout<<"Guardado Exitosamente"<<endl;
+
+     fclose(ArchivoProductos);
+}
+void MostrarProductos(){
+system("CLS");
+int Filas=6,FilasTotales=6;
+SetConsoleTitle("Listado De Productos");
+Productos Producto;
+FILE *ArchivoProductos=fopen("Productos.dat","rb");
+if(ArchivoProductos==NULL){
+     cout<<"Error 001"<<endl;
+     getch();
+     MenuInventario();
+}else{
+system("CLS");
+fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+gotoxy(10,3);cout << EIA << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CT<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<EDA << endl;
+gotoxy(10,4);cout<<V;gotoxy(14,4);cout<<"Codigo Del Producto";gotoxy(36,4);cout<<"Producto";gotoxy(54,4);cout<<"Precio Costo";gotoxy(70,4);cout<<"Precio Ventas";
+gotoxy(10,5);separador;
+
+     while(!feof(ArchivoProductos)){
+
+    ++Filas;
+    ++FilasTotales;
+    fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     }
+gotoxy(10,FilasTotales);cout << EIB<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CB<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<EDB << endl;;
+fclose(ArchivoProductos);
+}
 }
