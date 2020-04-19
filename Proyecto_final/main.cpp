@@ -458,97 +458,89 @@ char opc;
 }
 void IngresoProductos(){
  fflush(stdin);
-    Productos Producto;
-    Marcas Marca;
-     char opc;
-
-     int encontrado=0;
-     FILE *ArchivoProductos=fopen("Productos.dat","a+b");
-     FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
-loop:
-     rewind(ArchivoProductos);
-     int AuxCodigoProducto,auxIdMarca;
-     int encontrado2=0;
-     system("CLS");
-     fflush(stdin);
-     MostrarMarcas();
-     cout<<"Ingrese el Codigo del Producto"<<endl;
-     cin>>AuxCodigoProducto;
-     fflush(stdin);
-     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
-          while(!feof(ArchivoProductos)){
-          if(AuxCodigoProducto==Producto.CodigoProducto){
-          cout<<"El Codigo Ya Existente"<<endl;
-          getch();
-          encontrado2=1;
-
-          }
-           fread(&Producto,sizeof(Productos),1,ArchivoProductos);
-          }
-          if(encontrado2==1){
-               goto loop;
-          }
-          fflush(stdin);
-          Producto.CodigoProducto=AuxCodigoProducto;
-          fflush(stdin);
-     cout<<"Ingrese El Nombre Del Producto"<<endl;
-     cin.getline(Producto.DescripcionProducto,100,'\n');
-     fflush(stdin);
-     loop2:
-          rewind(ArchivoMarcas);
-     fflush(stdin);
-     cout<<"Ingrese el id de la marca del Producto"<<endl;
-     cin>>auxIdMarca;
-     fflush(stdin);
-     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-          while(!feof(ArchivoMarcas)){
-          if(auxIdMarca==Marca.idMarca){
-         Producto.idMarca=auxIdMarca;
-          fflush(stdin);
-          encontrado=1;
-          }
-
-          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-
-          }
-          if(encontrado==0){
-               cout<<"Id No Existente"<<endl;
-          getch();
-          goto loop2;
-          }
-          fclose(ArchivoMarcas);
-          fflush(stdin);
-
-          cout<<"Ingrese el precio Costo"<<endl;
-          cin>>Producto.PrecioCosto;
-          fflush(stdin);
-          cout<<"Ingrese el precio Venta"<<endl;
-          cin>>Producto.PrecioVenta;
-          fflush(stdin);
-          int correcto=0;
-          do{
-                    fflush(stdin);
-          cout<<"Ingrese el dia en que entro"<<endl;
-          cin>>Producto.FechaDeIngreso.d;
-          cout<<"Ingrese el Mes en que entro"<<endl;
-          cin>>Producto.FechaDeIngreso.m;
-          cout<<"Ingrese el anio en que entro"<<endl;
-          cin>>Producto.FechaDeIngreso.a;
-          if((Producto.FechaDeIngreso.d>0&&Producto.FechaDeIngreso.d<32)&&(Producto.FechaDeIngreso.m>0&&Producto.FechaDeIngreso.m<13)&&(Producto.FechaDeIngreso.a>2000&&Producto.FechaDeIngreso.a<2100)){
-               correcto=1;
-          }else{
-               cout<<"Formato Incorrecto dd/mm/aaaa"<<endl;
-          }
-          }while(correcto==0);
-     fwrite(&Producto,sizeof(Productos),1,ArchivoProductos);
-     cout<<"Desea Ingresar Otro Registro? (S/N)"<<endl;
-     cin>>opc;
-     if(opc=='S'||opc=='s'){
-          goto loop;
+ Productos Producto;
+ Marcas Marca;
+ FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+ FILE *ArchivoProductos=fopen("Productos.dat","a+b");
+ InicioIngresoProductos:
+ codigoProducto:
+ MostrarMarcas();
+ int auxCodigoProducto,encontradoCodigoProducto=0,auxIdMarca;
+ cout<<"Ingrese el codigo del producto"<<endl;
+ cin>>auxCodigoProducto;
+ fflush(stdin);
+ rewind(ArchivoProductos);
+ fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+ do{
+     if(auxCodigoProducto==Producto.CodigoProducto){
+      encontradoCodigoProducto=1;
      }
-     cout<<"Guardado Exitosamente"<<endl;
-
-     fclose(ArchivoProductos);
+     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+ }while(!feof(ArchivoProductos));
+ if(encontradoCodigoProducto==1){
+     cout<<"Codigo Ya existente"<<endl;
+     getch();
+     goto codigoProducto;
+ }
+ fflush(stdin);
+ Producto.CodigoProducto=auxCodigoProducto;
+ fflush(stdin);
+ cout<<"Ingrese el nombre del producto"<<endl;
+ cin.getline(Producto.DescripcionProducto,100,'\n');
+ fflush(stdin);
+IdMarca:
+     rewind(ArchivoMarcas);
+      fflush(stdin);
+int encontradoIdMarca=0;
+ cout<<"Ingrese el id de la marca del producto"<<endl;
+ cin>>auxIdMarca;
+ fflush(stdin);
+ fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+ do{
+     if(auxIdMarca==Marca.idMarca){
+          encontradoIdMarca=1;
+     }
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+ }while(!feof(ArchivoMarcas));
+ if(encontradoIdMarca==0){
+     cout<<"No existe ninguna marca con se ID"<<endl;
+     getch();
+     goto IdMarca;
+ }
+ fflush(stdin);
+ Producto.idMarca=auxIdMarca;
+ fflush(stdin);
+ cout<<"Ingrese precio venta de "<<Producto.DescripcionProducto<<endl;
+ cin>>Producto.PrecioVenta;
+ fflush(stdin);
+cout<<"Ingrese precio Costo de "<<Producto.DescripcionProducto<<endl;
+ cin>>Producto.PrecioCosto;
+ fflush(stdin);
+ int formatofecha=0;
+ do{
+     cout<<"Ingrese el dia que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.d;
+     fflush(stdin);
+     cout<<"Ingrese el Mes que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.m;
+     fflush(stdin);
+     cout<<"Ingrese el anio que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.a;
+     fflush(stdin);
+     if((Producto.FechaDeIngreso.d>0&&Producto.FechaDeIngreso.d<32)&&(Producto.FechaDeIngreso.m>0&&Producto.FechaDeIngreso.m<13)&&(Producto.FechaDeIngreso.a>1999&&Producto.FechaDeIngreso.a<2101)){
+          formatofecha=1;
+     }else{
+     cout<<"Formato Incorrecto(dd/mm/aaaa)"<<endl;
+     }
+ }while(formatofecha==0);
+ fwrite(&Producto,sizeof(Productos),1,ArchivoProductos);
+ cout<<"Desea Ingresar Otro Producto? (S/N)"<<endl;
+ cin>>opc;
+ if(opc=='s'||opc=='S'){
+     goto InicioIngresoProductos;
+ }
+ fclose(ArchivoMarcas);
+ fclose(ArchivoProductos);
 }
 void MostrarProductos(){
 system("CLS");
