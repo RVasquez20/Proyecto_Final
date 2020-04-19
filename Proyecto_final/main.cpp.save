@@ -53,7 +53,7 @@ void MenuMarcas();
 void IngresoDeMarcas();
 void MostrarMarcas();
 void ModificarMarca();
-
+void EliminarMarca();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -195,7 +195,9 @@ char opc;
           }
           case '4':
           {
-        MenuMarcas();
+               EliminarMarca();
+               getch();
+               MenuMarcas();
                break;
           }
           case 27:{
@@ -282,6 +284,7 @@ fflush(stdin);
      int AuxIdMarca,existe=0,aux2;
      system("CLS");
      fflush(stdin);
+     MostrarMarcas();
      cout<<"Ingrese el Id de la marca que desea Modificar"<<endl;
      cin>>AuxIdMarca;
      fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
@@ -333,4 +336,40 @@ fflush(stdin);
 
      fclose(ArchivoMarcas);
 }
+void EliminarMarca(){
+fflush(stdin);
+     Marcas Marca;
+     FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+     FILE *Temporal=fopen("Temporal.dat","wb");
+     int AuxIdMarca,existe=0;
+     system("CLS");
+     fflush(stdin);
+     MostrarMarcas();
+     cout<<"Ingrese el Id de la marca que desea Eliminar"<<endl;
+     cin>>AuxIdMarca;
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+          while(!feof(ArchivoMarcas)){
+          if(AuxIdMarca==Marca.idMarca){
+          cout<<"Id_Marca: "<<Marca.idMarca<<endl;
+          cout<<"Nombre:    "<<Marca.NombreMarca<<endl<<endl;
+          existe=1;
+          cout<<endl;
+          cout<<"Marca Eliminada correctamente"<<endl;
+          }else{
+          fwrite(&Marca,sizeof(Marcas),1,Temporal);
+          fflush(stdin);
+          }
 
+
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+
+          }
+         if(existe==0) {
+          cout<<"No existe una marca con ese codigo"<<endl;
+         }
+
+     fclose(Temporal);
+     fclose(ArchivoMarcas);
+     remove("Marcas.dat");
+     rename("Temporal.dat","Marcas.dat");
+}

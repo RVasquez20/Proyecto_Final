@@ -339,50 +339,28 @@ fflush(stdin);
 void EliminarMarca(){
 fflush(stdin);
      Marcas Marca;
-     FILE *ArchivoMarcas=fopen("Marcas.dat","r+b");
-     int AuxIdMarca,existe=0,aux2;
+     FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+     FILE *Temporal=fopen("Temporal.dat","wb");
+     int AuxIdMarca,existe=0;
      system("CLS");
      fflush(stdin);
-     cout<<"Ingrese el Id de la marca que desea Modificar"<<endl;
+     MostrarMarcas();
+     cout<<"Ingrese el Id de la marca que desea Eliminar"<<endl;
      cin>>AuxIdMarca;
      fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
           while(!feof(ArchivoMarcas)){
           if(AuxIdMarca==Marca.idMarca){
           cout<<"Id_Marca: "<<Marca.idMarca<<endl;
           cout<<"Nombre:    "<<Marca.NombreMarca<<endl<<endl;
+          existe=1;
+          cout<<endl;
+          cout<<"Marca Eliminada correctamente"<<endl;
           getch();
-          int pos=ftell(ArchivoMarcas)-sizeof(Marcas);
-
+          }else{
+          fwrite(&Marca,sizeof(Marcas),1,Temporal);
           fflush(stdin);
-          loop:
-          system("CLS");
-
-          cout<<"Ingrese el Id Nuevo"<<endl;
-     cin>>aux2;
-     rewind(ArchivoMarcas);
-     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-          while(!feof(ArchivoMarcas)){
-          if(aux2==Marca.idMarca){
-          cout<<"Id Ya Existente"<<endl;
-          getch();
-          goto loop;
           }
-          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-          }
-          fflush(stdin);
 
-          Marca.idMarca=aux2;
-     fflush(stdin);
-     fseek(ArchivoMarcas,pos,SEEK_SET);
-     cout<<"Ingrese El Nombre Nuevo"<<endl;
-     cin.getline(Marca.NombreMarca,50,'\n');
-     fflush(stdin);
-     fwrite(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-     cout<<"Modificado Exitosamente"<<endl;
-     existe=1;
-     break;
-
-          }
 
           fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
 
@@ -391,6 +369,8 @@ fflush(stdin);
           cout<<"No existe una marca con ese codigo"<<endl;
          }
 
-
+     fclose(Temporal);
      fclose(ArchivoMarcas);
+     remove("Marcas.dat");
+     rename("Temporal.dat","Marcas.dat");
 }
