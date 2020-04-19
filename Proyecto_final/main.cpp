@@ -279,27 +279,20 @@ void ModificarMarca(){
 fflush(stdin);
      Marcas Marca;
      FILE *ArchivoMarcas=fopen("Marcas.dat","r+b");
-     int AuxIdMarca,i=0;
+     int AuxIdMarca,i=0,existe=0;
      system("CLS");
      fflush(stdin);
      cout<<"Ingrese el Id de la marca que desea Modificar"<<endl;
      cin>>AuxIdMarca;
      fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-          do{
+          while(!feof(ArchivoMarcas)){
           if(AuxIdMarca==Marca.idMarca){
           cout<<"Id_Marca: "<<Marca.idMarca<<endl;
           cout<<"Nombre:    "<<Marca.NombreMarca<<endl;
-          getch();
-          }
-                     i++;
-          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
-
-          }while(!feof(ArchivoMarcas));
+          int pos=ftell(ArchivoMarcas)-sizeof(Marcas);
+          fseek(ArchivoMarcas,pos,SEEK_SET);
           fflush(stdin);
-          rewind(ArchivoMarcas);
-          fseek(ArchivoMarcas,i-1*sizeof(Marcas),SEEK_SET);
-          fflush(stdin);
-      cout<<"Ingrese el Id Nuevo"<<endl;
+          cout<<"Ingrese el Id Nuevo"<<endl;
      cin>>Marca.idMarca;
      fflush(stdin);
      cout<<"Ingrese El Nombre Nuevo"<<endl;
@@ -307,6 +300,19 @@ fflush(stdin);
      fflush(stdin);
      fwrite(&Marca,sizeof(Marcas),1,ArchivoMarcas);
      cout<<"Modificado Exitosamente"<<endl;
+     existe=1;
+     break;
+
+          }
+
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+
+          }
+         if(existe==0) {
+          cout<<"No existe una marca con ese codigo"<<endl;
+         }
+
+
      fclose(ArchivoMarcas);
 }
 
