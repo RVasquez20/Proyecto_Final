@@ -216,6 +216,7 @@ char opc;
 void IngresoDeMarcas(){
      fflush(stdin);
      Marcas Marca;
+     char opc;
      FILE *ArchivoMarcas=fopen("Marcas.dat","a+b");
      loop:
      rewind(ArchivoMarcas);
@@ -240,6 +241,11 @@ void IngresoDeMarcas(){
      fflush(stdin);
      fwrite(&Marca,sizeof(Marcas),1,ArchivoMarcas);
      cout<<"Guardado Exitosamente"<<endl;
+     cout<<"Desea Ingresar Otro Registro? (S/N)"<<endl;
+     cin>>opc;
+     if(opc=='S'||opc=='s'){
+          goto loop;
+     }
      fclose(ArchivoMarcas);
 }
 void MostrarMarcas(){
@@ -248,6 +254,9 @@ int Filas=6,FilasTotales=6;
 SetConsoleTitle("Listado De Marcas");
 Marcas Marca;
 FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+if(ArchivoMarcas==NULL){
+     c"
+}
 system("CLS");
 fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
 gotoxy(10,3);cout << EIA << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CT<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<EDA << endl;
@@ -264,15 +273,37 @@ gotoxy(10,FilasTotales);cout << EIB<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<
 fclose(ArchivoMarcas);
 }
 void ModificarMarca(){
-     loop:
-system("CLS");
-SetConsoleTitle("Modificacion De Marca");
-Marcas Marca;
-int CodigoNuevo=0,aux=0;
-char NombreNuevo[50];
-MostrarMarcas();
-FILE *ArchivoMarcas=fopen("Marcas.dat","r+b");
+fflush(stdin);
+     Marcas Marca;
+     FILE *ArchivoMarcas=fopen("Marcas.dat","r+b");
+     int AuxIdMarca,i=0;
+     system("CLS");
+     fflush(stdin);
+     cout<<"Ingrese el Id de la marca que desea Modificar"<<endl;
+     cin>>AuxIdMarca;
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+          do{
+          if(AuxIdMarca==Marca.idMarca){
+          cout<<"Id_Marca: "<<Marca.idMarca<<endl;
+          cout<<"Nombre:    "<<Marca.NombreMarca<<endl;
+          getch();
+          }
+                     i++;
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
 
-fclose(ArchivoMarcas);
+          }while(!feof(ArchivoMarcas));
+          fflush(stdin);
+          rewind(ArchivoMarcas);
+          fseek(ArchivoMarcas,i-1*sizeof(Marcas),SEEK_SET);
+          fflush(stdin);
+      cout<<"Ingrese el Id Nuevo"<<endl;
+     cin>>Marca.idMarca;
+     fflush(stdin);
+     cout<<"Ingrese El Nombre Nuevo"<<endl;
+     cin.getline(Marca.NombreMarca,50,'\n');
+     fflush(stdin);
+     fwrite(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     cout<<"Modificado Exitosamente"<<endl;
+     fclose(ArchivoMarcas);
 }
 
