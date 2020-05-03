@@ -60,6 +60,8 @@ void EliminarMarca();
 void MenuInventario();
 void IngresoProductos();
 void MostrarProductos();
+void ModificarProductos();
+void EliminarProducto();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -429,7 +431,7 @@ char opc;
           }
           case '3':
           {
-
+          ModificarProductos();
           getch();
           MenuInventario();
                break;
@@ -547,6 +549,8 @@ system("CLS");
 int Filas=6,FilasTotales=6;
 SetConsoleTitle("Listado De Productos");
 Productos Producto;
+ Marcas Marca;
+ FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
 FILE *ArchivoProductos=fopen("Productos.dat","rb");
 if(ArchivoProductos==NULL){
      cout<<"Error 001"<<endl;
@@ -560,12 +564,163 @@ gotoxy(7,4);cout<<V;gotoxy(7,4);cout<<"Cod.Producto";gotoxy(30,4);cout<<"Product
 gotoxy(1,5);cout<<endl;
 
      while(!feof(ArchivoProductos)){
-gotoxy(7,Filas);cout<<V;gotoxy(7,Filas);cout<<Producto.CodigoProducto;gotoxy(30,Filas);cout<<Producto.DescripcionProducto;gotoxy(46,4);cout<<Producto.idMarca;gotoxy(57,4);cout<<Producto.PrecioCosto;gotoxy(77,4);cout<<Producto.PrecioVenta;gotoxy(96,4);cout<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
+gotoxy(7,Filas);cout<<V;gotoxy(7,Filas);cout<<Producto.CodigoProducto;gotoxy(30,Filas);cout<<Producto.DescripcionProducto;
+rewind(ArchivoMarcas);
+fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+while(!feof(ArchivoMarcas)){
+     if(Producto.idMarca==Marca.idMarca){
+          gotoxy(46,Filas);cout<<Marca.NombreMarca;
+     }
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+}
+
+
+gotoxy(57,Filas);cout<<"Q."<<Producto.PrecioCosto;gotoxy(77,Filas);cout<<"Q."<<Producto.PrecioVenta;gotoxy(96,Filas);cout<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
     ++Filas;
     ++FilasTotales;
     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
      }
-gotoxy(2,FilasTotales);cout << EIB<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<CB<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<EDB << endl;;
+
 fclose(ArchivoProductos);
+fclose(ArchivoMarcas);
 }
+}
+void ModificarProductos(){
+char Eleccion;
+ fflush(stdin);
+ Productos Producto;
+  Marcas Marca;
+ FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+ FILE *ArchivoProductos=fopen("Productos.dat","r+b");
+ BusquedaParaModificar:
+      system("CLS");
+      MostrarProductos();
+      rewind(ArchivoProductos);
+      rewind(ArchivoMarcas);
+ int AuxBusquedaCodigoProducto=0,EncontradoCodigoaModificar=0;
+ cout<<"Ingrese el codigo del producto a modificar"<<endl;
+ cin>>AuxBusquedaCodigoProducto;
+  fflush(stdin);
+ fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     while(!feof(ArchivoProductos)){
+     if(AuxBusquedaCodigoProducto==Producto.CodigoProducto){
+               EncontradoCodigoaModificar=1;
+     cout<<"Codigo: "<<Producto.CodigoProducto<<endl;
+     cout<<"Producto: "<<Producto.DescripcionProducto<<endl;
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     while(!feof(ArchivoMarcas)){
+     if(Producto.idMarca==Marca.idMarca){
+          cout<<"Id Marca: "<<Marca.NombreMarca<<endl;
+     }
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     }
+     cout<<"Precio Costo : "<<Producto.PrecioCosto<<endl;
+     cout<<"Precio Venta : "<<Producto.PrecioVenta<<endl;
+     cout<<"Fecha de ingreso: "<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
+cout<<endl;
+cout<<"Este es el producto que desea modificar? S/N"<<endl;
+cin>>Eleccion;
+fflush(stdin);
+if(Eleccion=='N'||Eleccion=='n'){
+     goto BusquedaParaModificar;
+}
+  int pos=ftell(ArchivoProductos)-sizeof(Productos);
+fflush(stdin);
+codigoProducto:
+ MostrarMarcas();
+ int auxCodigoProducto,encontradoCodigoProducto=0,auxIdMarca;
+ cout<<"Ingrese el codigo nuevo del producto"<<endl;
+ cin>>auxCodigoProducto;
+ fflush(stdin);
+ rewind(ArchivoProductos);
+ fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+ do{
+     if(auxCodigoProducto==Producto.CodigoProducto){
+      encontradoCodigoProducto=1;
+     }
+     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+ }while(!feof(ArchivoProductos));
+ if(encontradoCodigoProducto==1){
+     cout<<"Codigo Ya existente"<<endl;
+     getch();
+     goto codigoProducto;
+ }
+ fflush(stdin);
+ Producto.CodigoProducto=auxCodigoProducto;
+ fflush(stdin);
+ fseek(ArchivoProductos,pos,SEEK_SET);
+fflush(stdin);
+ cout<<"Ingrese el nuevo nombre del producto"<<endl;
+ cin.getline(Producto.DescripcionProducto,100,'\n');
+ fflush(stdin);
+IdMarca:
+     rewind(ArchivoMarcas);
+      fflush(stdin);
+int encontradoIdMarca=0;
+ cout<<"Ingrese el id de la marca del producto"<<endl;
+ cin>>auxIdMarca;
+ fflush(stdin);
+ fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+ do{
+     if(auxIdMarca==Marca.idMarca){
+          encontradoIdMarca=1;
+     }
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+ }while(!feof(ArchivoMarcas));
+ if(encontradoIdMarca==0){
+     cout<<"No existe ninguna marca con se ID"<<endl;
+     getch();
+     goto IdMarca;
+ }
+ fflush(stdin);
+ Producto.idMarca=auxIdMarca;
+ fflush(stdin);
+ cout<<"Ingrese precio venta de "<<Producto.DescripcionProducto<<endl;
+ cin>>Producto.PrecioVenta;
+ fflush(stdin);
+cout<<"Ingrese precio Costo de "<<Producto.DescripcionProducto<<endl;
+ cin>>Producto.PrecioCosto;
+ fflush(stdin);
+ int formatofecha=0;
+ do{
+     cout<<"Ingrese el dia que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.d;
+     fflush(stdin);
+     cout<<"Ingrese el Mes que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.m;
+     fflush(stdin);
+     cout<<"Ingrese el anio que el producto ingreso"<<endl;
+     cin>>Producto.FechaDeIngreso.a;
+     fflush(stdin);
+     if((Producto.FechaDeIngreso.d>0&&Producto.FechaDeIngreso.d<32)&&(Producto.FechaDeIngreso.m>0&&Producto.FechaDeIngreso.m<13)&&(Producto.FechaDeIngreso.a>1999&&Producto.FechaDeIngreso.a<2101)){
+          formatofecha=1;
+     }else{
+     cout<<"Formato Incorrecto(dd/mm/aaaa)"<<endl;
+     }
+ }while(formatofecha==0);
+ fwrite(&Producto,sizeof(Productos),1,ArchivoProductos);
+ fflush(stdin);
+ cout<<"Modificado Exitosamente"<<endl;
+ break;
+     }
+     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+
+     }
+     if(EncontradoCodigoaModificar==0){
+          cout<<"Codigo No existente"<<endl;
+          getch();
+          goto BusquedaParaModificar;
+     }
+
+ fclose(ArchivoProductos);
+  fclose(ArchivoMarcas);
+}
+void EliminarProducto(){
+Productos Producto;
+FILE *ArchivoProductos=fopen("Productos.dat","rb");
+FILE *Temporal=fopen("Temporal.dat","w+b");
+
+
+fclose(ArchivoProductos);
+fclose(Temporal);
 }
