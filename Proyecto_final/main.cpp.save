@@ -438,7 +438,7 @@ char opc;
           }
           case '4':
           {
-
+               Elim
                getch();
                MenuInventario();
                break;
@@ -719,8 +719,28 @@ void EliminarProducto(){
 Productos Producto;
 FILE *ArchivoProductos=fopen("Productos.dat","rb");
 FILE *Temporal=fopen("Temporal.dat","w+b");
-
-
+BusquedaDeCodigoParaEliminar:
+     rewind(ArchivoProductos);
+int EncontradoCodigo=0,AuxCodigoProducto=0;
+cout<<"Ingrese el codigo del producto que desea eliminar"<<endl;
+cin>>AuxCodigoProducto;
+fflush(stdin);
+fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     while(!feof(ArchivoProductos)){
+     if(AuxCodigoProducto==Producto.CodigoProducto){
+          cout<<"Producto Eliminado Correctamente"<<endl;
+          EncontradoCodigo=1;
+          }
+          fwrite(&Producto,sizeof(Productos),1,Temporal);
+          fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     }
+     if(EncontradoCodigo==0) {
+          cout<<"No existe un Producto con ese codigo"<<endl;
+          getch();
+          goto BusquedaDeCodigoParaEliminar;
+         }
 fclose(ArchivoProductos);
 fclose(Temporal);
+remove("Productos.dat");
+rename("Temporal.dat","Productos.dat");
 }

@@ -61,6 +61,7 @@ void MenuInventario();
 void IngresoProductos();
 void MostrarProductos();
 void ModificarProductos();
+void EliminarProducto();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -437,7 +438,7 @@ char opc;
           }
           case '4':
           {
-
+               EliminarProducto();
                getch();
                MenuInventario();
                break;
@@ -584,7 +585,6 @@ fclose(ArchivoProductos);
 fclose(ArchivoMarcas);
 }
 }
-
 void ModificarProductos(){
 char Eleccion;
  fflush(stdin);
@@ -714,4 +714,37 @@ cout<<"Ingrese precio Costo de "<<Producto.DescripcionProducto<<endl;
 
  fclose(ArchivoProductos);
   fclose(ArchivoMarcas);
+}
+void EliminarProducto(){
+Productos Producto;
+FILE *ArchivoProductos=fopen("Productos.dat","rb");
+FILE *Temporal=fopen("Temporal.dat","w+b");
+BusquedaDeCodigoParaEliminar:
+     system("CLS");
+     MostrarProductos();
+     rewind(ArchivoProductos);
+int EncontradoCodigo=0,AuxCodigoProducto=0;
+cout<<"Ingrese el codigo del producto que desea eliminar"<<endl;
+cin>>AuxCodigoProducto;
+fflush(stdin);
+fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     while(!feof(ArchivoProductos)){
+     if(AuxCodigoProducto==Producto.CodigoProducto){
+          cout<<"Producto Eliminado Correctamente"<<endl;
+          EncontradoCodigo=1;
+          }else{
+          fwrite(&Producto,sizeof(Productos),1,Temporal);
+          fflush(stdin);
+          }
+          fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+     }
+     if(EncontradoCodigo==0) {
+          cout<<"No existe un Producto con ese codigo"<<endl;
+          getch();
+          goto BusquedaDeCodigoParaEliminar;
+         }
+fclose(ArchivoProductos);
+fclose(Temporal);
+remove("Productos.dat");
+rename("Temporal.dat","Productos.dat");
 }
