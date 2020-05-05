@@ -29,13 +29,15 @@ struct fecha FechaDeIngreso;
 typedef Productos Producto;
 
 struct Clientes{
-int NIT;
+char NIT[10];
 char NombreCliente[50],DireccionCliente[50];
 };
 typedef Clientes Cliente;
 
 struct Facturas{
-int NoFactura,NITFactura;
+int NoFactura;
+char NITFactura[10];
+struct fecha FechaFactura;
 };
 typedef Facturas Factura;
 
@@ -62,6 +64,8 @@ void IngresoProductos();
 void MostrarProductos();
 void ModificarProductos();
 void EliminarProducto();
+void MenuFacturas();
+void Facture();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -122,10 +126,14 @@ char opc;
           case '2':
           {
               MenuInventario();
+              getch();
+               MenuPrincipal();
                break;
           }
           case '3':
           {
+               MenuFacturas();
+                    getch();
         MenuPrincipal();
                break;
           }
@@ -438,7 +446,7 @@ char opc;
           }
           case '4':
           {
-               Elim
+               EliminarProducto();
                getch();
                MenuInventario();
                break;
@@ -451,7 +459,7 @@ char opc;
           {
                cout << "Opcion Incorreta elija de nuevo" << endl;
                getch();
-              MenuMarcas();
+              MenuInventario();
           }
           }
      }
@@ -720,6 +728,8 @@ Productos Producto;
 FILE *ArchivoProductos=fopen("Productos.dat","rb");
 FILE *Temporal=fopen("Temporal.dat","w+b");
 BusquedaDeCodigoParaEliminar:
+     system("CLS");
+     MostrarProductos();
      rewind(ArchivoProductos);
 int EncontradoCodigo=0,AuxCodigoProducto=0;
 cout<<"Ingrese el codigo del producto que desea eliminar"<<endl;
@@ -730,8 +740,10 @@ fread(&Producto,sizeof(Productos),1,ArchivoProductos);
      if(AuxCodigoProducto==Producto.CodigoProducto){
           cout<<"Producto Eliminado Correctamente"<<endl;
           EncontradoCodigo=1;
-          }
+          }else{
           fwrite(&Producto,sizeof(Productos),1,Temporal);
+          fflush(stdin);
+          }
           fread(&Producto,sizeof(Productos),1,ArchivoProductos);
      }
      if(EncontradoCodigo==0) {
@@ -743,4 +755,202 @@ fclose(ArchivoProductos);
 fclose(Temporal);
 remove("Productos.dat");
 rename("Temporal.dat","Productos.dat");
+}
+void MenuFacturas(){
+char opc;
+     SetConsoleTitle("Menu Inventario");
+     system("CLS");
+         gotoxy(35, 7);
+     ARAR;
+     gotoxy(35, 8);
+     cout << V << "             Menu Principal Facturacion           " << V << endl;
+     gotoxy(35, 9);
+     AREN;
+     gotoxy(35, 10);
+     cout << V << "              1. Compra nueva                     " << V << endl;
+     gotoxy(35, 11);
+     cout << V << "              2. Busqueda De Clientes             " << V << endl;
+     gotoxy(35, 12);
+     cout << V << "              3. Busqueda De Facturas             " << V << endl;
+     gotoxy(35, 13);
+     ARENBJ;
+     gotoxy(35, 14);
+     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
+     gotoxy(35, 15);
+     ABJ;
+     gotoxy(35, 16);
+     opc = getch();
+      if (opc == 8)
+     {
+          MenuPrincipal();
+     }
+     else
+     {
+          switch (opc)
+          {
+          case '1':
+          {
+               Facture();
+               //ProductosAComprar
+               //FacturaDetalle
+               getch();
+               MenuFacturas();
+               break;
+          }
+          case '2':
+          {
+
+              getch();
+              MenuFacturas();
+               break;
+          }
+          case '3':
+          {
+
+          getch();
+          MenuFacturas();
+               break;
+          }
+
+          case 27:{
+          exit(0);
+          break;
+          }
+          default:
+          {
+               cout << "Opcion Incorreta elija de nuevo" << endl;
+               getch();
+              MenuFacturas();
+          }
+          }
+     }
+
+}
+void Facture(){
+     Clientes Cliente;
+     Facturas Factura;
+     FILE *Facture=fopen("Factura.dat","a+b");
+     FILE *Clients=fopen("Clientes.dat","a+b");
+inicio:
+     int valido=0,Contador=0,encontrado=0;
+     fflush(stdin);
+    system("CLS");
+    string nit;
+    cout<<"INGRESE NIT CON GUION: ";
+    getline(cin, nit);
+    fflush(stdin);
+    int tam=nit.size();
+    bool ver;
+    char frase[tam];
+    strcpy(frase,nit.c_str());
+    for(int i=0; i<tam; i++){
+        if(frase[i]=='-'){
+            ver=true;
+        }
+    }
+    if(ver==false){
+        cout<<"NIT INGRESADO NO CONTIENE GUION";
+        getch();
+        goto inicio;
+    }
+	char *token, *aux, *numnit;
+	token=strtok(frase, "-");
+    int numval, tamnum;
+	while(token != NULL && ver==true){
+        aux=token;
+		token=strtok(NULL,"-");
+		if(token==NULL){
+			numval=atoi(aux);
+		} else{
+			numnit=aux;
+			tamnum=strlen(aux);
+		}
+	}
+	int  digitos[tamnum], num1;
+	num1=atoi(numnit);
+	for(int i=0; i<tamnum; i++){
+        num1=numnit[i]- '0';
+        digitos[i]=num1;
+	}
+    int j=1, acum=0, mult, n1,n2,n3,n4, n5, codv, codigo;
+    for(int i=tamnum-1; i>=0; i--){
+        j++;
+        mult=digitos[i]*j;
+        acum=acum+mult;
+    }
+	n1=acum/11;
+	n2=n1*11;
+	n3=acum-n2;
+	n4=n3/11;
+	n5=n4*11;
+	codv=n3-n5;
+	codigo=11-codv;
+	if(numval==codigo){
+        cout<<"Formato de nit correcto"<<endl;
+        getch();
+        valido=1;
+	} else{
+        cout<<"Formato de nit incorrecto"<<endl;
+        getch();
+        goto inicio;
+	}
+	if(valido==1){
+               rewind(Clients);
+      fread(&Cliente,sizeof(Clientes),1,Clients);
+      while(!feof(Clients)){
+
+          if(strcmp(frase,Cliente.NIT)==0){
+
+ encontrado=1;
+                     rewind(Facture);
+          fread(&Factura,sizeof(Facturas),1,Facture);
+          while(!feof(Facture)){
+
+               Contador++;
+               fread(&Factura,sizeof(Facturas),1,Facture);
+          }
+          Factura.NoFactura=Contador;
+          fflush(stdin);
+          strcpy(Factura.NITFactura,frase);
+          fflush(stdin);
+          Factura.FechaFactura.d=tmP->tm_mday;
+          fflush(stdin);
+          Factura.FechaFactura.m=tmP->tm_mon+1;
+          fflush(stdin);
+          Factura.FechaFactura.a=tmP->tm_year+1900;
+          fflush(stdin);
+          fwrite(&Factura,sizeof(Facturas),1,Facture);
+
+          }
+          fread(&Cliente,sizeof(Clientes),1,Clients);
+      }
+
+      if(encontrado==0){
+          cout<<"Ingrese El nombre Completo Del Cliente"<<endl;
+          cin.getline(Cliente.NombreCliente,50,'\n');
+          fflush(stdin);
+          cout<<"Ingrese La direccion Del Cliente"<<endl;
+          cin.getline(Cliente.DireccionCliente,50,'\n');
+          fflush(stdin);
+          strcpy(Cliente.NIT,frase);
+          fflush(stdin);
+          fwrite(&Cliente,sizeof(Clientes),1,Clients);
+          rewind(Facture);
+          fread(&Factura,sizeof(Facturas),1,Facture);
+          while(!feof(Facture)){
+
+               Contador++;
+               fread(&Factura,sizeof(Facturas),1,Facture);
+          }
+          Factura.NoFactura=Contador;
+          strcpy(Factura.NITFactura,frase);
+          Factura.FechaFactura.d=tmP->tm_mday;
+          Factura.FechaFactura.m=tmP->tm_mon+1;
+          Factura.FechaFactura.a=tmP->tm_year+1900;
+          fwrite(&Factura,sizeof(Facturas),1,Facture);
+      }
+
+	}
+fclose(Facture);
+fclose(Clients);
 }
