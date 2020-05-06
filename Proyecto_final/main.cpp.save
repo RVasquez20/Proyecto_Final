@@ -52,6 +52,7 @@ typedef FacturasDetalle FacturaDetalle;
 time_t tSac = time(NULL);
 struct tm* tmP = localtime(&tSac);
 char opc;//opciones de funciones del do while
+bool real=false;//Verificacion de nit
 //Prototipos de Funciones Del Programa
 void MenuPrincipal();
 void MenuMarcas();
@@ -66,6 +67,8 @@ void ModificarProductos();
 void EliminarProducto();
 void MenuFacturas();
 void Facture();
+bool ValidacionNIT(string);
+void mostrar();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -799,7 +802,7 @@ char opc;
           }
           case '2':
           {
-
+               mostrar();
               getch();
               MenuFacturas();
                break;
@@ -826,20 +829,8 @@ char opc;
      }
 
 }
-void Facture(){
-     Clientes Cliente;
-     Facturas Factura;
-     FILE *Facture=fopen("Factura.dat","a+b");
-     FILE *Clients=fopen("Clientes.dat","a+b");
-inicio:
-     int valido=0,Contador=0,encontrado=0;
-     fflush(stdin);
-    system("CLS");
-    string nit;
-    cout<<"INGRESE NIT CON GUION: ";
-    getline(cin, nit);
-    fflush(stdin);
-    int tam=nit.size();
+bool ValidacionNIT(string nit){
+        int tam=nit.size();
     bool ver;
     char frase[tam];
     strcpy(frase,nit.c_str());
@@ -849,36 +840,39 @@ inicio:
         }
     }
     if(ver==false){
-        cout<<"NIT INGRESADO NO CONTIENE GUION";
-        getch();
-        goto inicio;
+        gotoxy(1,25);cout<<"NIT INGRESADO NO CONTIENE GUION"<<endl;
+        real=false;
+        Facture();
     }
 	char *token, *aux, *numnit;
 	token=strtok(frase, "-");
-    int numval, tamnum;
+	int numval, tamnum;
 	while(token != NULL && ver==true){
         aux=token;
 		token=strtok(NULL,"-");
 		if(token==NULL){
+            char k=*aux;
+            if(k=='k'){ numval=10;}
 			numval=atoi(aux);
 		} else{
 			numnit=aux;
 			tamnum=strlen(aux);
 		}
 	}
-	int  digitos[tamnum], num1;
+	char digg[tamnum], digtemp;
+	int ddiv, mmod,digitos[tamnum], numnumnit, base=10, num1;
 	num1=atoi(numnit);
 	for(int i=0; i<tamnum; i++){
         num1=numnit[i]- '0';
         digitos[i]=num1;
-	}
-    int j=1, acum=0, mult, n1,n2,n3,n4, n5, codv, codigo;
+    }
+	int j=1, acum=0, mult, n1,n2,n3,n4, n5, codv, codigo;
     for(int i=tamnum-1; i>=0; i--){
         j++;
         mult=digitos[i]*j;
         acum=acum+mult;
     }
-	n1=acum/11;
+    n1=acum/11;
 	n2=n1*11;
 	n3=acum-n2;
 	n4=n3/11;
@@ -886,71 +880,102 @@ inicio:
 	codv=n3-n5;
 	codigo=11-codv;
 	if(numval==codigo){
-        cout<<"Formato de nit correcto"<<endl;
-        getch();
-        valido=1;
-	} else{
-        cout<<"Formato de nit incorrecto"<<endl;
-        getch();
-        goto inicio;
+        real=true;
 	}
-	if(valido==1){
-               rewind(Clients);
-      fread(&Cliente,sizeof(Clientes),1,Clients);
-      while(!feof(Clients)){
+	if(numval!=codigo){
+	    real=false;
+	}
+	return real;
+}
+void Facture(){
+     Clientes Cliente;
+     Facturas Factura;
+     FILE *Clients=fopen("Clientes.dat","a+b");
+     FILE *Factures=fopen("Factura.dat","a+b");
+     int EncontradoNit=0;
+     int IncrementoAutomatico=0;
+     string Auxnit;
+     do{
 
-          if(strcmp(frase,Cliente.NIT)==0){
 
- encontrado=1;
-                     rewind(Facture);
-          fread(&Factura,sizeof(Facturas),1,Facture);
-          while(!feof(Facture)){
 
-               Contador++;
-               fread(&Factura,sizeof(Facturas),1,Facture);
-          }
-          Factura.NoFactura=Contador;
+     system("CLS");
+     cout<<"Ingrese El nit "<<endl;
+     getline(cin,Auxnit);
+     ValidacionNIT(Auxnit);
+
+     }while(real==false);
+fread(&Cliente,sizeof(Clientes),1,Clients);
+     do{
+     if(strcmp(Auxnit.c_str(),Cliente.NIT)==0){
+          EncontradoNit=1;
+     IncrementoAutomatico=0;
+          fread(&Factura,sizeof(Facturas),1,Factures);
+          do{
+               IncrementoAutomatico++;
+               fread(&Factura,sizeof(Facturas),1,Factures);
+          }while(!feof(Factures));
+          strcpy(Factura.NITFactura,Auxnit.c_str());
           fflush(stdin);
-          strcpy(Factura.NITFactura,frase);
+          Factura.NoFactura=IncrementoAutomatico;
           fflush(stdin);
           Factura.FechaFactura.d=tmP->tm_mday;
-          fflush(stdin);
           Factura.FechaFactura.m=tmP->tm_mon+1;
-          fflush(stdin);
           Factura.FechaFactura.a=tmP->tm_year+1900;
-          fflush(stdin);
-          fwrite(&Factura,sizeof(Facturas),1,Facture);
+          fwrite(&Factura,sizeof(Facturas),1,Factures);
+     }
+ fread(&Cliente,sizeof(Clientes),1,Clients);
+     }while(!feof(Clients));
 
-          }
-          fread(&Cliente,sizeof(Clientes),1,Clients);
-      }
-
-      if(encontrado==0){
-          cout<<"Ingrese El nombre Completo Del Cliente"<<endl;
+     if(EncontradoNit==0){
+          rewind(Clients);
+          rewind(Factures);
+          cout<<"Ingrese El Nombre del Cliente"<<endl;
           cin.getline(Cliente.NombreCliente,50,'\n');
           fflush(stdin);
-          cout<<"Ingrese La direccion Del Cliente"<<endl;
+          cout<<"Ingrese La direccion del Cliente"<<endl;
           cin.getline(Cliente.DireccionCliente,50,'\n');
           fflush(stdin);
-          strcpy(Cliente.NIT,frase);
+          strcpy(Cliente.NIT,Auxnit.c_str());
           fflush(stdin);
           fwrite(&Cliente,sizeof(Clientes),1,Clients);
-          rewind(Facture);
-          fread(&Factura,sizeof(Facturas),1,Facture);
-          while(!feof(Facture)){
-
-               Contador++;
-               fread(&Factura,sizeof(Facturas),1,Facture);
-          }
-          Factura.NoFactura=Contador;
-          strcpy(Factura.NITFactura,frase);
+          IncrementoAutomatico=0;
+          fread(&Factura,sizeof(Facturas),1,Factures);
+          do{
+               IncrementoAutomatico++;
+               fread(&Factura,sizeof(Facturas),1,Factures);
+          }while(!feof(Factures));
+          strcpy(Factura.NITFactura,Auxnit.c_str());
+          fflush(stdin);
+          Factura.NoFactura=IncrementoAutomatico;
+          fflush(stdin);
           Factura.FechaFactura.d=tmP->tm_mday;
           Factura.FechaFactura.m=tmP->tm_mon+1;
           Factura.FechaFactura.a=tmP->tm_year+1900;
-          fwrite(&Factura,sizeof(Facturas),1,Facture);
-      }
+          fwrite(&Factura,sizeof(Facturas),1,Factures);
+     }
 
-	}
-fclose(Facture);
 fclose(Clients);
+fclose(Factures);
+
 }
+void mostrar(){
+     Facturas Factura;
+FILE *Facturation=fopen("Factura.dat","rb");
+fread(&Factura,sizeof(Facturas),1,Facturation);
+while(!feof(Facturation)){
+cout<<Factura.NoFactura<<endl;
+cout<<Factura.NITFactura<<endl;
+cout<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
+fread(&Factura,sizeof(Facturas),1,Facturation);
+}
+fclose(Facturation);
+}
+
+
+
+
+
+
+
+
