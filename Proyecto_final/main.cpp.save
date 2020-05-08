@@ -53,6 +53,7 @@ time_t tSac = time(NULL);
 struct tm* tmP = localtime(&tSac);
 char opc;//opciones de funciones del do while
 bool real=false;//Verificacion de nit
+int IA=0;//Incremento Automatico XD
 //Prototipos de Funciones Del Programa
 void MenuPrincipal();
 void MenuMarcas();
@@ -68,6 +69,8 @@ void EliminarProducto();
 void MenuFacturas();
 void Facture();
 bool ValidacionNIT(string);
+int Contador(int );
+void ProductosAComprar();
 void mostrar();
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
@@ -561,7 +564,6 @@ int Filas=6,FilasTotales=6;
 SetConsoleTitle("Listado De Productos");
 Productos Producto;
  Marcas Marca;
- int c=0;
  FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
 FILE *ArchivoProductos=fopen("Productos.dat","rb");
 if(ArchivoProductos==NULL){
@@ -590,10 +592,7 @@ gotoxy(57,Filas);cout<<"Q."<<Producto.PrecioCosto;gotoxy(77,Filas);cout<<"Q."<<P
     ++Filas;
     ++FilasTotales;
     fread(&Producto,sizeof(Productos),1,ArchivoProductos);
-    c=c+1;
-
      }
-cout<<c<<endl;
 fclose(ArchivoProductos);
 fclose(ArchivoMarcas);
 }
@@ -796,7 +795,7 @@ char opc;
           case '1':
           {
                Facture();
-               //ProductosAComprar
+
                //FacturaDetalle
                getch();
                MenuFacturas();
@@ -811,7 +810,7 @@ char opc;
           }
           case '3':
           {
-
+ProductosAComprar();
           getch();
           MenuFacturas();
                break;
@@ -861,8 +860,8 @@ bool ValidacionNIT(string nit){
 			tamnum=strlen(aux);
 		}
 	}
-	char digg[tamnum], digtemp;
-	int ddiv, mmod,digitos[tamnum], numnumnit, base=10, num1;
+
+	int  digitos[tamnum], num1;
 	num1=atoi(numnit);
 	for(int i=0; i<tamnum; i++){
         num1=numnit[i]- '0';
@@ -894,7 +893,6 @@ void Facture(){
      Facturas Factura;
      FILE *Clients=fopen("Clientes.dat","a+b");
      int EncontradoNit=0;
-     int IA=0;
      string Auxnit;
      do{
 system("CLS");
@@ -908,14 +906,10 @@ fread(&Cliente,sizeof(Clientes),1,Clients);
 while(!feof(Clients)){
 if(strcmp(Auxnit.c_str(),Cliente.NIT)==0){
     EncontradoNit=1;
-    FILE *Factures=fopen("Factura.dat","a+b");
-    fread(&Factura,sizeof(Facturas),1,Factures);
-    while(!feof(Factures)){
-          IA+=1;
-     fread(&Factura,sizeof(Facturas),1,Factures);
-    }
+     IA=1;
     fflush(stdin);
-    Factura.NoFactura=IA;
+    Factura.NoFactura=Contador(IA);
+    FILE *Factures=fopen("Factura.dat","a+b");
     strcpy(Factura.NITFactura,Auxnit.c_str());
     Factura.FechaFactura.d=tmP->tm_mday;
     Factura.FechaFactura.m=tmP->tm_mon+1;
@@ -928,6 +922,7 @@ fread(&Cliente,sizeof(Clientes),1,Clients);
 
 if(EncontradoNit==0){
 fflush(stdin);
+IA=1;
 cout<<"Ingrese el Nombre Completo del Cliente"<<endl;
 cin.getline(Cliente.NombreCliente,50,'\n');
 fflush(stdin);
@@ -937,14 +932,9 @@ fflush(stdin);
 strcpy(Cliente.NIT,Auxnit.c_str());
 fflush(stdin);
 fwrite(&Cliente,sizeof(Clientes),1,Clients);
-FILE *Factures=fopen("Factura.dat","a+b");
-    fread(&Factura,sizeof(Facturas),1,Factures);
-    while(!feof(Factures)){
-          IA+=1;
-     fread(&Factura,sizeof(Facturas),1,Factures);
-    }
     fflush(stdin);
-    Factura.NoFactura=IA;
+    Factura.NoFactura=Contador(IA);
+    FILE *Factures=fopen("Factura.dat","a+b");
     strcpy(Factura.NITFactura,Auxnit.c_str());
     Factura.FechaFactura.d=tmP->tm_mday;
     Factura.FechaFactura.m=tmP->tm_mon+1;
@@ -955,6 +945,25 @@ FILE *Factures=fopen("Factura.dat","a+b");
 
 fclose(Clients);
 }
+int Contador(int valor){
+     Facturas Factura;
+     FILE *Factures=fopen("Factura.dat","rb");
+fread(&Factura,sizeof(Facturas),1,Factures);
+    while(!feof(Factures)){
+          valor=valor+1;
+     fread(&Factura,sizeof(Facturas),1,Factures);
+    }
+     fclose(Factures);
+     return valor;
+}
+void ProductosAComprar(){
+cout<<Contador(IA);
+}
+
+
+
+
+
 void mostrar(){
      system("CLS");
      Facturas Factura;
@@ -979,7 +988,9 @@ fread(&Cliente,sizeof(Clientes),1,Clients);
 }
 fclose(Facturation);
 fclose(Clients);
+
 }
+
 
 
 
