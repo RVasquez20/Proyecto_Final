@@ -1,9 +1,0 @@
-No.Factura 21 	Fecha: 10/5/2020
-NIT: 1740184-4
-Cliente: David Azurdia
-Direccion: Antigua
--------------------------------------------------
-No.	Codigo Producto	Descripcion	Subtotal
-1	12	pan	Marca Europa 	Q. 20.00 
-2	12	pan	Marca Europa 	Q. 20.00 
-Total: Q. 40
