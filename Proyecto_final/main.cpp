@@ -56,6 +56,7 @@ bool real=false;//Verificacion de nit
 int IA=0;//Incremento Automatico XD
 //Prototipos de Funciones Del Programa
 void MenuPrincipal();
+bool VerificadorDeNumeros(string);
 void MenuMarcas();
 void IngresoDeMarcas();
 void MostrarMarcas();
@@ -93,6 +94,12 @@ main(){
      system("CLS");
 */
 MenuPrincipal();
+}
+bool VerificadorDeNumeros(string str) {
+   for (int i = 0; i < str.length(); i++)
+   if (isdigit(str[i]) == false)
+      return false;
+      return true;
 }
 void MenuPrincipal(){
 char opc;
@@ -244,11 +251,20 @@ void IngresoDeMarcas(){
      FILE *ArchivoMarcas=fopen("Marcas.dat","a+b");
      loop:
      rewind(ArchivoMarcas);
+     string AUX;
      int AuxIdMarca;
      system("CLS");
      fflush(stdin);
      cout<<"Ingrese el Id de la marca"<<endl;
-     cin>>AuxIdMarca;
+     getline(cin,AUX);
+     if(VerificadorDeNumeros(AUX)){
+          AuxIdMarca=atoi(AUX.c_str());
+     }else{
+     cout<<"Ingreso alguna letra Porfavor Ingrese solo numeros"<<endl;
+     getch();
+     system("CLS");
+     goto loop;
+     }
      fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
           while(!feof(ArchivoMarcas)){
           if(AuxIdMarca==Marca.idMarca){
@@ -795,7 +811,7 @@ char opc;
           case '1':
           {
                Facture();
-
+               ProductosAComprar();
                //FacturaDetalle
                getch();
                MenuFacturas();
@@ -810,7 +826,7 @@ char opc;
           }
           case '3':
           {
-ProductosAComprar();
+
           getch();
           MenuFacturas();
                break;
@@ -892,6 +908,7 @@ void Facture(){
      Clientes Cliente;
      Facturas Factura;
      FILE *Clients=fopen("Clientes.dat","a+b");
+     FILE *Temporal=fopen("Impresion.txt","w+");
      int EncontradoNit=0;
      string Auxnit;
      do{
@@ -916,6 +933,17 @@ if(strcmp(Auxnit.c_str(),Cliente.NIT)==0){
     Factura.FechaFactura.a=tmP->tm_year+1900;
     fwrite(&Factura,sizeof(Facturas),1,Factures);
     fclose(Factures);
+    system("CLS");
+    cout<<"No.Factura "<<Factura.NoFactura<<"\t Fecha : "<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
+    cout<<"NIT: "<<Factura.NITFactura<<endl;
+    cout<<"Cliente: "<<Cliente.NombreCliente<<endl;
+    cout<<"Direccion: "<<Cliente.DireccionCliente<<endl;
+    cout<<"-------------------------------------------"<<endl;
+    fprintf(Temporal,"No.Factura %d \tFecha: %d/%d/%d\n",Factura.NoFactura,Factura.FechaFactura.d,Factura.FechaFactura.m,Factura.FechaFactura.a);
+    fprintf(Temporal,"NIT: %s\n",Factura.NITFactura);
+    fprintf(Temporal,"Cliente: %s\n",Cliente.NombreCliente);
+    fprintf(Temporal,"Direccion: %s\n",Cliente.DireccionCliente);
+    fprintf(Temporal,"-------------------------------------------------\n");
 }
 fread(&Cliente,sizeof(Clientes),1,Clients);
 }
@@ -941,9 +969,21 @@ fwrite(&Cliente,sizeof(Clientes),1,Clients);
     Factura.FechaFactura.a=tmP->tm_year+1900;
     fwrite(&Factura,sizeof(Facturas),1,Factures);
     fclose(Factures);
+    system("CLS");
+    cout<<"No.Factura "<<Factura.NoFactura<<"\t Fecha : "<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
+    cout<<"NIT: "<<Factura.NITFactura<<endl;
+    cout<<"Cliente: "<<Cliente.NombreCliente<<endl;
+    cout<<"Direccion: "<<Cliente.DireccionCliente<<endl;
+    cout<<"-------------------------------------------"<<endl;
+        fprintf(Temporal,"No.Factura %d \tFecha: %d%d%d\n",Factura.NoFactura,Factura.FechaFactura.d,Factura.FechaFactura.m,Factura.FechaFactura.a);
+    fprintf(Temporal,"NIT: %s\n",Factura.NITFactura);
+    fprintf(Temporal,"Cliente: %s\n",Cliente.NombreCliente);
+    fprintf(Temporal,"Direccion: %s\n",Cliente.DireccionCliente);
+    fprintf(Temporal,"-------------------------------------------------\n");
 }
 
 fclose(Clients);
+fclose(Temporal);
 }
 int Contador(int valor){
      Facturas Factura;
@@ -957,8 +997,53 @@ fread(&Factura,sizeof(Facturas),1,Factures);
      return valor;
 }
 void ProductosAComprar(){
-     IA=0;
-cout<<Contador(IA);
+FILE *Details=fopen("factura_detalle.dat","a+b");
+FILE *Temporal=fopen("Impresion.txt","a+");
+Clientes Cliente;
+Facturas Factura;
+Marcas Marca;
+Productos Producto;
+FacturasDetalle FacturaDetalle;
+double subtotal=0;
+int AuxCodigo=0,Contador2=0;
+gotoxy(0,9);cout<<"No.\tCodigo Producto\tDescripcion\tSubtotal"<<endl;
+fprintf(Temporal,"No.\tCodigo\tProducto\tDescripcion\tSubtotal\n");
+do{
+int IdFacturesDetails=0,EncontradoProducto=0,EncontradoMarca=0;
+gotoxy(0,8);cout<<"    ";
+gotoxy(0,8);cin>>AuxCodigo;
+fflush(stdin);
+FILE *Products=fopen("Productos.dat","rb");
+fread(&Producto,sizeof(Productos),1,Products);
+while(!feof(Products)){
+     if(AuxCodigo==Producto.CodigoProducto){
+          Contador2++;
+gotoxy(0,11+Contador2);cout<<Contador2<<"\t"<<Producto.CodigoProducto<<"\t"<<Producto.DescripcionProducto<<" Marca ";
+fprintf(Temporal,"%d\t%d\t%s\t",Contador2,Producto.CodigoProducto,Producto.DescripcionProducto);
+      FILE *Marcs=fopen("Marcas.dat","rb");
+      fread(&Marca,sizeof(Marca),1,Marcs);
+      while(!feof(Marcs)){
+          if(Producto.idMarca==Marca.idMarca){
+           cout<<Marca.NombreMarca;
+           fprintf(Temporal,"Marca %s \t",Marca.NombreMarca);
+          }
+          fread(&Marca,sizeof(Marca),1,Marcs);
+      }
+      fclose(Marcs);
+      cout<<"\t Q."<<Producto.PrecioVenta<<endl;
+      fprintf(Temporal,"Q. %.2f \n",Producto.PrecioVenta);
+      subtotal=subtotal+Producto.PrecioVenta;
+     }
+     fread(&Producto,sizeof(Productos),1,Products);
+}
+
+fclose(Products);
+}while(AuxCodigo!=0);
+gotoxy(0,8);cout<<"    ";
+gotoxy(0,12+Contador2);cout<<"Total: Q."<<subtotal<<endl;
+fprintf(Temporal,"Total: Q. %.2f",subtotal);
+fclose(Details);
+fclose(Temporal);
 }
 
 
