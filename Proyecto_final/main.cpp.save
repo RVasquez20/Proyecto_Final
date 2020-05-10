@@ -81,6 +81,7 @@ void SearchWhitCorrelative();
 void SearchFactureWhitNIT();
 void MenuAyuda();
 void mostrar();
+void Actualizacion(int,int);
 main(){
 /*SetConsoleTitle("WEEKEND PLACE");
     system("color 09");
@@ -397,6 +398,30 @@ fflush(stdin);
 
 
      fclose(ArchivoMarcas);
+     Actualizacion(aux2,AuxIdMarca);
+}
+void Actualizacion(int idnew,int idold){
+     int encontrado2=0,contador=0;
+     Productos Producto;
+     FILE *Products=fopen("Productos.dat","r+b");
+     fread(&Producto,sizeof(Productos),1,Products);
+     while(!feof(Products)){
+     if(idold==Producto.idMarca){
+          encontrado2=1;
+ int pos=ftell(Products)-sizeof(Productos);
+     fseek()
+
+          
+
+           fwrite(&Producto,sizeof(Productos),1,Products);
+     }
+fread(&Producto,sizeof(Productos),1,Products);
+     }
+if(encontrado2==0){
+     cout<<"Productos Actualizados Exitosamente"<<endl;
+}
+
+     fclose(Products);
 }
 void EliminarMarca(){
 fflush(stdin);
@@ -404,22 +429,11 @@ fflush(stdin);
      FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
      FILE *Temporal=fopen("Temporal.dat","wb");
      int AuxIdMarca,existe=0;
-     string AUX;
      system("CLS");
      fflush(stdin);
      MostrarMarcas();
      cout<<"Ingrese el Id de la marca que desea Eliminar"<<endl;
-     cin>>AUX;
-     fflush(stdin);
-     if(VerificadorDeNumeros(AUX)){
-                fflush(stdin);
-          AuxIdMarca=atoi(AUX.c_str());
-     }else{
-     cout<<"Ingreso alguna letra Porfavor Ingrese solo numeros"<<endl;
-     getch();
-     system("CLS");
-     goto inicio;
-     }
+     cin>>AuxIdMarca;
      fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
           while(!feof(ArchivoMarcas)){
           if(AuxIdMarca==Marca.idMarca){
@@ -533,19 +547,8 @@ void IngresoProductos(){
  codigoProducto:
  MostrarMarcas();
  int auxCodigoProducto,encontradoCodigoProducto=0,auxIdMarca;
- string AUX;
  cout<<"Ingrese el codigo del producto"<<endl;
-cin>>AUX;
-     fflush(stdin);
-     if(VerificadorDeNumeros(AUX)){
-                fflush(stdin);
-          auxCodigoProducto=atoi(AUX.c_str());
-     }else{
-     cout<<"Ingreso alguna letra Porfavor Ingrese solo numeros"<<endl;
-     getch();
-     system("CLS");
-     goto InicioIngresoProductos;
-     }
+ cin>>auxCodigoProducto;
  fflush(stdin);
  rewind(ArchivoProductos);
  fread(&Producto,sizeof(Productos),1,ArchivoProductos);
@@ -571,17 +574,7 @@ IdMarca:
       fflush(stdin);
 int encontradoIdMarca=0;
  cout<<"Ingrese el id de la marca del producto"<<endl;
- cin>>AUX;
-     fflush(stdin);
-     if(VerificadorDeNumeros(AUX)){
-                fflush(stdin);
-          AuxIdMarca=atoi(AUX.c_str());
-     }else{
-     cout<<"Ingreso alguna letra Porfavor Ingrese solo numeros"<<endl;
-     getch();
-     system("CLS");
-     goto IdMarca;
-     }
+ cin>>auxIdMarca;
  fflush(stdin);
  fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
  do{
@@ -812,19 +805,8 @@ BusquedaDeCodigoParaEliminar:
      MostrarProductos();
      rewind(ArchivoProductos);
 int EncontradoCodigo=0,AuxCodigoProducto=0;
-string AUX;
 cout<<"Ingrese el codigo del producto que desea eliminar"<<endl;
-cin>>AUX;
-     fflush(stdin);
-     if(VerificadorDeNumeros(AUX)){
-                fflush(stdin);
-          AuxCodigoProducto=atoi(AUX.c_str());
-     }else{
-     cout<<"Ingreso alguna letra Porfavor Ingrese solo numeros"<<endl;
-     getch();
-     system("CLS");
-     goto BusquedaDeCodigoParaEliminar;
-     }
+cin>>AuxCodigoProducto;
 fflush(stdin);
 fread(&Producto,sizeof(Productos),1,ArchivoProductos);
      while(!feof(ArchivoProductos)){
