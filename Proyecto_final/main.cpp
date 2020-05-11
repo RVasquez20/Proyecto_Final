@@ -59,6 +59,7 @@ int IA=0;//Incremento Automatico XD
 //Prototipos de Funciones Del Programa
 void MenuPrincipal();
 bool VerificadorDeNumeros(string);
+void Minusculas(string &);
 void MenuMarcas();
 void IngresoDeMarcas();
 void MostrarMarcas();
@@ -67,6 +68,9 @@ void EliminarMarca();
 void MenuInventario();
 void IngresoProductos();
 void MostrarProductos();
+void BuscarProductos();
+void SearchProductsForName();
+void SearchProductsForCode();
 void ModificarProductos();
 void EliminarProducto();
 void MenuFacturas();
@@ -83,6 +87,7 @@ void SearchFactureWhitNIT();
 void MenuAyuda();
 void mostrar();
 void Actualizacion(int,int);
+
 main(){
 /*SetConsoleTitle("Supermercado UMG");
     system("color 09");
@@ -107,15 +112,14 @@ MenuPrincipal();
 }
 bool VerificadorDeNumeros(string str){
    for (int i = 0; i < str.length(); i++)
-   if (!isdigit(str[i])){
+   if (isdigit(str[i])==false)
       return false;
-   }else{
       return true;
-   }
+
 }
 void MenuPrincipal(){
 char opc;
-     SetConsoleTitle("Menu Principal");
+     SetConsoleTitle("Menu Principal1");
      system("CLS");
          gotoxy(35, 7);
      ARAR;
@@ -411,7 +415,7 @@ while(!feof(Inventario)){
      if(idold==Producto.idMarca)
      {
           Producto.CodigoProducto=Producto.CodigoProducto;
-          Producto.DescripcionProducto==Producto.DescripcionProducto;
+          strcpy(Producto.DescripcionProducto,Producto.DescripcionProducto);
           Producto.FechaDeIngreso.d=Producto.FechaDeIngreso.d;
           Producto.FechaDeIngreso.m=Producto.FechaDeIngreso.m;
           Producto.FechaDeIngreso.a=Producto.FechaDeIngreso.a;
@@ -483,16 +487,18 @@ char opc;
      gotoxy(35, 11);
      cout << V << "              2. Mostrar Listado de Productos     " << V << endl;
      gotoxy(35, 12);
-     cout << V << "              3. Modificar Productos              " << V << endl;
+     cout << V << "              3. Consulta de Productos            " << V << endl;
      gotoxy(35, 13);
-     cout << V << "              4. Eliminar Productos               " << V << endl;
+     cout << V << "              4. Modificar Productos              " << V << endl;
      gotoxy(35, 14);
-     ARENBJ;
+     cout << V << "              5. Eliminar Productos               " << V << endl;
      gotoxy(35, 15);
-     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
+     ARENBJ;
      gotoxy(35, 16);
-     ABJ;
+     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
      gotoxy(35, 17);
+     ABJ;
+     gotoxy(35, 18);
      opc = getch();
       if (opc == 8)
      {
@@ -518,12 +524,19 @@ char opc;
           }
           case '3':
           {
-          ModificarProductos();
+          BuscarProductos();
           getch();
           MenuInventario();
                break;
           }
           case '4':
+          {
+          ModificarProductos();
+          getch();
+          MenuInventario();
+               break;
+          }
+          case '5':
           {
                EliminarProducto();
                getch();
@@ -673,6 +686,183 @@ gotoxy(57,Filas);cout<<"Q."<<Producto.PrecioCosto;gotoxy(77,Filas);cout<<"Q."<<P
 fclose(ArchivoProductos);
 fclose(ArchivoMarcas);
 }
+}
+void BuscarProductos(){
+     char opc;
+     SetConsoleTitle("Menu Consultas");
+     system("CLS");
+         gotoxy(35, 7);
+     ARAR;
+     gotoxy(35, 8);
+     cout << V << "             Menu De Consultas                    " << V << endl;
+     gotoxy(35, 9);
+     AREN;
+     gotoxy(35, 10);
+     cout << V << "              1. Busqueda de producto por nombre  " << V << endl;
+     gotoxy(35, 11);
+     cout << V << "              2. Busqueda De Producto Por Codigo  " << V << endl;
+     gotoxy(35, 12);
+     ARENBJ;
+     gotoxy(35, 13);
+     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
+     gotoxy(35, 14);
+     ABJ;
+     gotoxy(35, 15);
+     opc = getch();
+      if (opc == 8)
+     {
+          MenuPrincipal();
+     }
+     else
+     {
+          switch (opc)
+          {
+          case '1':
+          {
+               SearchProductsForName();
+               getch();
+               BuscarProductos();
+               break;
+          }
+          case '2':
+          {
+              SearchProductsForCode();
+              getch();
+              BuscarProductos();
+               break;
+          }
+
+
+          case 27:{
+          exit(0);
+          break;
+          }
+          default:
+          {
+               cout << "Opcion Incorreta elija de nuevo" << endl;
+               getch();
+              MenuAyuda();
+          }
+          }
+     }
+}
+void SearchProductsForName(){
+
+     system("CLS");
+     int Filas=6,FilasTotales=6,encontradomarca=0;
+     SetConsoleTitle("Listado De Productos");
+     Productos Producto;
+      Marcas Marca;
+      FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+     FILE *ArchivoProductos=fopen("Productos.dat","rb");
+     if(ArchivoProductos==NULL){
+          cout<<"Error 001"<<endl;
+          getch();
+          MenuInventario();
+     }else{
+          fflush(stdin);
+     string aux;
+     string nombre;
+     bool encontrado=false;
+         system("CLS");
+               fflush(stdin);
+               cout<<"Ingrese el nombre del producto que busca"<<endl;
+               getline(cin,aux);
+               fflush(stdin);
+               Minusculas(aux);
+               SetConsoleTitle("Registros");
+          cout << "+--------------------------------------------------------------------------+" << endl;
+     gotoxy(7,4);cout<<V;gotoxy(7,4);cout<<"Cod.Producto";gotoxy(30,4);cout<<"Producto";gotoxy(46,4);cout<<"ID Marca";gotoxy(57,4);cout<<"Precio Costo";gotoxy(77,4);cout<<"Precio Venta";gotoxy(96,4);cout<<"Fecha.Ingreso";
+     gotoxy(1,5);cout<<endl;
+        fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+               do{
+                    nombre=Producto.DescripcionProducto;
+                    Minusculas(nombre);
+                    fflush(stdin);
+                    if(nombre.find(aux)!=string::npos){
+                              encontrado=true;
+          gotoxy(7,Filas);cout<<V;gotoxy(7,Filas);cout<<Producto.CodigoProducto;gotoxy(30,Filas);cout<<Producto.DescripcionProducto;
+     rewind(ArchivoMarcas);
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     while(!feof(ArchivoMarcas)){
+          if(Producto.idMarca==Marca.idMarca){
+               gotoxy(46,Filas);cout<<Marca.NombreMarca;
+               encontradomarca=1;
+          }
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     }
+
+
+
+     gotoxy(57,Filas);cout<<"Q."<<Producto.PrecioCosto;gotoxy(77,Filas);cout<<"Q."<<Producto.PrecioVenta;gotoxy(96,Filas);cout<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
+         ++Filas;
+         ++FilasTotales;
+
+                     }
+                  fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+          }while(feof(ArchivoProductos)==0);
+          if(encontrado==false){
+               cout<<"No se encontro"<<endl;
+           }
+          fclose(ArchivoProductos);
+
+     }
+}
+void SearchProductsForCode(){
+ system("CLS");
+     int Filas=6,FilasTotales=6,encontradomarca=0;
+     SetConsoleTitle("Listado De Productos");
+     Productos Producto;
+      Marcas Marca;
+      FILE *ArchivoMarcas=fopen("Marcas.dat","rb");
+     FILE *ArchivoProductos=fopen("Productos.dat","rb");
+     if(ArchivoProductos==NULL){
+          cout<<"Error 001"<<endl;
+          getch();
+          MenuInventario();
+     }else{
+          fflush(stdin);
+int aux=0;
+     bool encontrado=false;
+         system("CLS");
+               fflush(stdin);
+               cout<<"Ingrese el codigo del producto que busca"<<endl;
+               cin>>aux;
+               fflush(stdin);
+               SetConsoleTitle("Registros");
+          cout << "+--------------------------------------------------------------------------+" << endl;
+     gotoxy(7,4);cout<<V;gotoxy(7,4);cout<<"Cod.Producto";gotoxy(30,4);cout<<"Producto";gotoxy(46,4);cout<<"ID Marca";gotoxy(57,4);cout<<"Precio Costo";gotoxy(77,4);cout<<"Precio Venta";gotoxy(96,4);cout<<"Fecha.Ingreso";
+     gotoxy(1,5);cout<<endl;
+        fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+               do{
+                    if(aux==Producto.CodigoProducto){
+                              encontrado=true;
+          gotoxy(7,Filas);cout<<V;gotoxy(7,Filas);cout<<Producto.CodigoProducto;gotoxy(30,Filas);cout<<Producto.DescripcionProducto;
+     rewind(ArchivoMarcas);
+     fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     while(!feof(ArchivoMarcas)){
+          if(Producto.idMarca==Marca.idMarca){
+               gotoxy(46,Filas);cout<<Marca.NombreMarca;
+               encontradomarca=1;
+          }
+          fread(&Marca,sizeof(Marcas),1,ArchivoMarcas);
+     }
+
+
+
+     gotoxy(57,Filas);cout<<"Q."<<Producto.PrecioCosto;gotoxy(77,Filas);cout<<"Q."<<Producto.PrecioVenta;gotoxy(96,Filas);cout<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
+         ++Filas;
+         ++FilasTotales;
+
+                     }
+                  fread(&Producto,sizeof(Productos),1,ArchivoProductos);
+          }while(feof(ArchivoProductos)==0);
+          if(encontrado==false){
+               cout<<"No se encontro"<<endl;
+           }
+          fclose(ArchivoProductos);
+
+     }
 }
 void ModificarProductos(){
 char Eleccion;
@@ -1195,14 +1385,15 @@ bool encontrado=false;
      	cout<<"Ingrese el nombre que busca"<<endl;
      	getline(cin,aux);
      	fflush(stdin);
+     	Minusculas(aux);
           SetConsoleTitle("Registros");
 	cout << "+--------------------------------------------------------------------------+" << endl;
           cout << "Nombre\t\tNIT\t\tDireccion" << endl;
           fread(&Cliente, sizeof(Clientes), 1, Clients);
           do
           {
-
-          nombre=Cliente.NombreCliente;
+               nombre=Cliente.NombreCliente;
+               Minusculas(nombre);
           	fflush(stdin);
           	if(nombre.find(aux)!=string::npos){
      cout<<Cliente.NombreCliente<<"\t"<<Cliente.NIT<<"\t"<<Cliente.DireccionCliente<<endl;
@@ -1457,7 +1648,12 @@ char opc;
           }
      }
 }
-
+void Minusculas(string &s){
+int i;
+for(i=0;i<s.length();i++){
+     s[i]=tolower(s[i]);
+}
+}
 
 
 
@@ -1489,6 +1685,11 @@ fclose(Clients);
 }
 
 */
+
+
+
+
+
 
 
 

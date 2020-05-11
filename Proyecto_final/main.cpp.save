@@ -411,7 +411,7 @@ while(!feof(Inventario)){
      if(idold==Producto.idMarca)
      {
           Producto.CodigoProducto=Producto.CodigoProducto;
-          Producto.DescripcionProducto==Producto.DescripcionProducto;
+          strcpy)=
           Producto.FechaDeIngreso.d=Producto.FechaDeIngreso.d;
           Producto.FechaDeIngreso.m=Producto.FechaDeIngreso.m;
           Producto.FechaDeIngreso.a=Producto.FechaDeIngreso.a;
@@ -1201,8 +1201,8 @@ bool encontrado=false;
           fread(&Cliente, sizeof(Clientes), 1, Clients);
           do
           {
+               nombre=Cliente.NombreCliente;
 
-          nombre=Cliente.NombreCliente;
           	fflush(stdin);
           	if(nombre.find(aux)!=string::npos){
      cout<<Cliente.NombreCliente<<"\t"<<Cliente.NIT<<"\t"<<Cliente.DireccionCliente<<endl;
@@ -1489,6 +1489,11 @@ fclose(Clients);
 }
 
 */
+
+
+
+
+
 
 
 
