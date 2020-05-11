@@ -401,26 +401,33 @@ fflush(stdin);
      Actualizacion(aux2,AuxIdMarca);
 }
 void Actualizacion(int idnew,int idold){
-     int encontrado2=0,contador=0;
-     Productos Producto;
-     FILE *Products=fopen("Productos.dat","r+b");
-     fread(&Producto,sizeof(Productos),1,Products);
-     while(!feof(Products)){
-     if(idold==Producto.idMarca){
-          encontrado2=1;
+Productos Producto;
+FILE *Inventario=fopen("Productos.dat","r+b");
+FILE *Temporal=fopen("temporal.dat","a+b");
+fread(&Producto,sizeof(Productos),1,Inventario);
+while(!feof(Inventario)){
+     if(idold==Producto.idMarca)
+     {
+          Producto.CodigoProducto=Producto.CodigoProducto;
+          Producto.DescripcionProducto==Producto.DescripcionProducto;
+          Producto.FechaDeIngreso.d=Producto.FechaDeIngreso.d;
+          Producto.FechaDeIngreso.m=Producto.FechaDeIngreso.m;
+          Producto.FechaDeIngreso.a=Producto.FechaDeIngreso.a;
           Producto.idMarca=idnew;
- int pos=ftell(Products)-sizeof(Productos);
-     fseek(Products,pos,SEEK_SET);
-           fwrite(&Producto,sizeof(Productos),1,Products);
-           break;
+          Producto.PrecioCosto=Producto.PrecioCosto;
+          Producto.PrecioVenta=Producto.PrecioVenta;
+          fwrite(&Producto,sizeof(Productos),1,Temporal);
+     }else{
+     fwrite(&Producto,sizeof(Productos),1,Temporal);
+
      }
-fread(&Producto,sizeof(Productos),1,Products);
-     }
-if(encontrado2==1){
-     cout<<"Productos Actualizados Exitosamente"<<endl;
+     fread(&Producto,sizeof(Productos),1,Inventario);
 }
 
-     fclose(Products);
+fclose(Inventario);
+fclose(Temporal);
+remove("Productos.dat");
+rename("temporal.dat","Productos.dat");
 }
 void EliminarMarca(){
 fflush(stdin);
