@@ -2,6 +2,7 @@
 #include<time.h>
 #include <fstream>
 #include<ctype.h>
+
 char CT = 203, LTI = 204, H = 205, CRUZ = 206, CB = 202, EIA = 201, EIB = 200, LTD = 185, V = 186, EDA = 187, EDB = 188;
 #define ARAR cout << EIA << H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<<EDA << endl;
 #define AREN cout << LTI << H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<< H<<H<< H<< LTD << endl;
@@ -83,9 +84,9 @@ void MenuAyuda();
 void mostrar();
 void Actualizacion(int,int);
 main(){
-/*SetConsoleTitle("WEEKEND PLACE");
+/*SetConsoleTitle("Supermercado UMG");
     system("color 09");
-     gotoxy(40,10);cout << "Bienvenidos al Programa WEEKEND PLACE"<<endl;
+     gotoxy(40,10);cout << "Bienvenidos al Programa Supermercado"<<endl;
      gotoxy(45,11);cout << "Hecho por: Rodrigo Vasquez"<<endl;
      gotoxy(50,12);cout << "RV.Enterprices"<<endl;
      cout<<endl;
@@ -104,11 +105,13 @@ main(){
 */
 MenuPrincipal();
 }
-bool VerificadorDeNumeros(string str) {
+bool VerificadorDeNumeros(string str){
    for (int i = 0; i < str.length(); i++)
-   if (isdigit(str[i]) == false)
+   if (!isdigit(str[i])){
       return false;
+   }else{
       return true;
+   }
 }
 void MenuPrincipal(){
 char opc;
@@ -327,7 +330,6 @@ fclose(ArchivoMarcas);
 }
 }
 void ModificarMarca(){
-     Productos Producto;
      inicio:
 fflush(stdin);
      Marcas Marca;
@@ -1112,6 +1114,7 @@ gotoxy(0,12+Contador2);cout<<"Total: Q."<<subtotal<<endl;
 fprintf(Temporal,"Total: Q. %.2f",subtotal);
 fclose(Details);
 fclose(Temporal);
+system("Start imprimir.exe");
 }
 void MenuBusquedaCliente(){
 char opc;
@@ -1396,7 +1399,6 @@ string aux;
 
 }
 }
-
 void MenuAyuda(){
 char opc;
      SetConsoleTitle("Menu Ayuda");

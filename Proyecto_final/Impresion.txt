@@ -1,0 +1,10 @@
+No.Factura 25 	Fecha: 10/5/2020
+NIT: 8264080-7
+Cliente: David Mendoza Urizar
+Direccion: San felipe de huecos
+-------------------------------------------------
+No.	Codigo	Producto	Descripcion	Subtotal
+1	2	pani	Marca pan 	Q. 12.00 
+2	3	panit	Marca pan 	Q. 12.00 
+3	1	pan	Marca prueba 	Q. 12.00 
+Total: Q. 36.00
