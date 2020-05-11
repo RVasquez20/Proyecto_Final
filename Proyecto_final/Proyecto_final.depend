@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1589232173 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
+1589240434 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
 	<librerias.h>
 	<time.h>
 	<fstream>
 	<ctype.h>
+	<iomanip>
 

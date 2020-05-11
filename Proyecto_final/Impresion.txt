@@ -1,12 +1,11 @@
-No.Factura 26 	Fecha: 10/5/2020
-NIT: 1740184-4
-Cliente: David Azurdia
+No.Factura 27 	Fecha: 11/5/2020
+NIT: 4070750-4
+Cliente: Rodrigo Vasquez
 Direccion: Antigua
 -------------------------------------------------
 No.	Codigo	Producto	Descripcion	Subtotal
 1	1	pan	Marca prueba 	Q. 12.00 
-2	2	pani	Marca panitooo 	Q. 12.00 
-3	3	panit	Marca panitooo 	Q. 12.00 
-4	3	panit	Marca panitooo 	Q. 12.00 
-5	3	panit	Marca panitooo 	Q. 12.00 
-Total: Q. 60.00
+2	2	pani	Marca pan 	Q. 12.00 
+3	1	pan	Marca prueba 	Q. 12.00 
+4	2	pani	Marca pan 	Q. 12.00 
+Total: Q. 48.00
