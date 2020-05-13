@@ -101,6 +101,7 @@ void mostrar();
 void Actualizacion(int, int);
 main()
 {
+     system("color 0A");
      /*SetConsoleTitle("Supermercado UMG");
     system("color 09");
      gotoxy(40,10);cout << "Bienvenidos al Programa Supermercado"<<endl;
@@ -729,7 +730,7 @@ void EliminarMarca()
                     gotoxy(a, 18);
                     PUN;
                }
-               cout << "\n\n\t\t\t\t\t* SE HA ELIMINADO CORRECTAMENTE*" << endl;
+               cout << "\n\n\t\t\t\t\t\t* SE HA ELIMINADO CORRECTAMENTE*" << endl;
           }
           else
           {
@@ -740,7 +741,7 @@ void EliminarMarca()
      }
      if (existe == 0)
      {
-          cout << "\n\n\t\t\t\t\t* NO EXISTE UNA MARCA CON ESE ID *" << endl;
+          cout << "\n\n\t\t\t\t\t\t* NO EXISTE UNA MARCA CON ESE ID *" << endl;
      }
 
      fclose(Temporal);
@@ -1007,6 +1008,7 @@ IdMarca:
      {
           goto InicioIngresoProductos;
      }
+     cout<<"Guardado Exitosamente"<<endl;
      fclose(ArchivoMarcas);
      fclose(ArchivoProductos);
 }
@@ -1102,10 +1104,12 @@ void MostrarProductos()
                }
                if (encontradomarca == 0)
                {
-                    gotoxy(47, Filas);
-                    cout << V;
-                    gotoxy(50, Filas);
-                    cout << "Modificada!";
+                   gotoxy(40, Filas);
+                         cout << "NULL";
+                         gotoxy(47, Filas);
+                         cout << V;
+                         gotoxy(50, Filas);
+                         cout << "ELIMINADA!";
                }
 
                gotoxy(65, Filas);
@@ -1126,36 +1130,105 @@ void MostrarProductos()
                ++FilasTotales;
                fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
           }
+                    gotoxy(4,FilasTotales);cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB << endl;
           fclose(ArchivoProductos);
           fclose(ArchivoMarcas);
      }
 }
 void BuscarProductos()
 {
-     char opc;
-     SetConsoleTitle("Menu Consultas");
-     system("CLS");
-     gotoxy(35, 7);
-     ARAR;
-     gotoxy(35, 8);
-     cout << V << "             Menu De Consultas                    " << V << endl;
-     gotoxy(35, 9);
-     AREN;
-     gotoxy(35, 10);
-     cout << V << "              1. Busqueda de producto por nombre  " << V << endl;
-     gotoxy(35, 11);
-     cout << V << "              2. Busqueda De Producto Por Codigo  " << V << endl;
-     gotoxy(35, 12);
-     ARENBJ;
-     gotoxy(35, 13);
-     cout << V << "           <-- Regresar / ESC.)Salir              " << V << endl;
-     gotoxy(35, 14);
-     ABJ;
-     gotoxy(35, 15);
-     opc = getch();
+      char opc;
+          SetConsoleTitle("MENU BUSQUEDA DE PRODUCTOS");
+          system("CLS");
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 5);
+               HOR;
+          }
+          for (int a = 5; a <= 6; a++)
+          {
+               gotoxy(9, a);
+               VER
+          }
+          for (int a = 11; a <= 99; a++)
+          {
+               gotoxy(a, 6);
+               PUN;
+          }
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 7);
+               HOR;
+          }
+          gotoxy(41, 6);
+          cout << " B U S Q U E D A  D E  P R O D U C T O S ";
+          for (int a = 5; a <= 6; a++)
+          {
+               gotoxy(110, a);
+               VER
+          }
+          gotoxy(9, 5);
+          cout << TOPE;
+          gotoxy(110, 5);
+          cout << EDA;
+          gotoxy(9, 7);
+          cout << EIB;
+          gotoxy(110, 7);
+          cout << EDB;
+
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 9);
+               HOR;
+          }
+          for (int a = 9; a <= 20; a++)
+          {
+               gotoxy(9, a);
+               VER
+          }
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 20);
+               HOR;
+          }
+          for (int a = 9; a <= 20; a++)
+          {
+               gotoxy(110, a);
+               VER
+          }
+          gotoxy(9, 9);
+          cout << TOPE;
+          gotoxy(110, 9);
+          cout << EDA;
+          gotoxy(9, 20);
+          cout << EIB;
+          gotoxy(110, 20);
+          cout << EDB;
+          for (int a = 10; a <= 19; a++)
+          {
+               gotoxy(35, a);
+               VER
+          }
+          for (int a = 10; a <= 19; a++)
+          {
+               gotoxy(84, a);
+               VER
+          }
+          gotoxy(35, 11);
+          cout << V << " -->   [1] POR MEDIO DE NOMBRE                  " << V;
+          gotoxy(35, 13);
+          cout << V << " -->   [2] POR MEDIO DE CODIGO                  " << V;
+          gotoxy(35, 15);
+          ARENBJ;
+          gotoxy(35, 19);
+          ABJ;
+          gotoxy(35, 17);
+          cout << V << "         <-- REGRESAR / ESC. SALIR              " << V;
+          gotoxy(35, 22);
+          opc = getch();
      if (opc == 8)
      {
-          MenuPrincipal();
+          MenuInventario();
      }
      else
      {
@@ -1195,7 +1268,7 @@ void SearchProductsForName()
 {
 
      system("CLS");
-     int Filas = 6, FilasTotales = 6, encontradomarca = 0;
+     int Filas = 7, FilasTotales = 7, encontradomarca = 0;
      SetConsoleTitle("Listado De Productos");
      Productos Producto;
      Marcas Marca;
@@ -1213,30 +1286,58 @@ void SearchProductsForName()
           string aux;
           string nombre;
           bool encontrado = false;
-          system("CLS");
+
           fflush(stdin);
           cout << "Ingrese el nombre del producto que busca" << endl;
           getline(cin, aux);
           fflush(stdin);
           Minusculas(aux);
-          SetConsoleTitle("Registros");
-          cout << "+--------------------------------------------------------------------------+" << endl;
-          gotoxy(7, 4);
+
+               SetConsoleTitle("Registros");
+
+            for (int a = 10; a <= 100; a++)
+          {
+               gotoxy(a, 3);
+               PUN;
+          }
+          gotoxy(35, 3);
+          cout << " L I S T A D O  D E  C O I N C I D E N C I A S";
+          gotoxy(4, 4);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4, 5);
           cout << V;
-          gotoxy(7, 4);
-          cout << "Cod.Producto";
-          gotoxy(30, 4);
-          cout << "Producto";
-          gotoxy(46, 4);
-          cout << "ID Marca";
-          gotoxy(57, 4);
-          cout << "Precio Costo";
-          gotoxy(77, 4);
-          cout << "Precio Venta";
-          gotoxy(96, 4);
-          cout << "Fecha.Ingreso";
-          gotoxy(1, 5);
-          cout << endl;
+          gotoxy(111, 5);
+          cout << V;
+          gotoxy(6, 5);
+          cout << "COD. PRODUCTO";
+          gotoxy(20, 5);
+          cout << V;
+          gotoxy(24, 5);
+          cout << "PRODUCTO";
+          gotoxy(36, 5);
+          cout << V;
+          gotoxy(37, 5);
+          cout << " ID MARCA";
+          gotoxy(47, 5);
+          cout << V;
+          gotoxy(54, 5);
+          cout << "MARCA";
+          gotoxy(65, 5);
+          cout << V;
+          gotoxy(67, 5);
+          cout << "PRECIO COSTO";
+          gotoxy(81, 5);
+          cout << V;
+          gotoxy(84, 5);
+          cout << "PRECIO VENTA";
+          gotoxy(98, 5);
+          cout << V;
+          gotoxy(100, 5);
+          cout << "FECHA. INGRESO";
+          gotoxy(115, 5);
+          cout << V;
+          gotoxy(4, 6);
+          separador2;
           fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
           do
           {
@@ -1246,31 +1347,47 @@ void SearchProductsForName()
                if (nombre.find(aux) != string::npos)
                {
                     encontrado = true;
-                    gotoxy(7, Filas);
-                    cout << V;
-                    gotoxy(7, Filas);
-                    cout << Producto.CodigoProducto;
-                    gotoxy(30, Filas);
-                    cout << Producto.DescripcionProducto;
+                gotoxy(4, Filas);
+               cout << V;
+               gotoxy(11, Filas);
+               cout << Producto.CodigoProducto;
+               gotoxy(20, Filas);
+               cout << V;
+               gotoxy(22, Filas);
+               cout << Producto.DescripcionProducto;
+               gotoxy(36, Filas);
+               cout << V;
                     rewind(ArchivoMarcas);
                     fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                     while (!feof(ArchivoMarcas))
                     {
                          if (Producto.idMarca == Marca.idMarca)
                          {
-                              gotoxy(46, Filas);
-                              cout << Marca.NombreMarca;
+                              gotoxy(40, Filas);
+                         cout << Marca.idMarca;
+                         gotoxy(47, Filas);
+                         cout << V;
+                         gotoxy(50, Filas);
+                         cout << Marca.NombreMarca;
                               encontradomarca = 1;
                          }
                          fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                     }
 
-                    gotoxy(57, Filas);
-                    cout << "Q." << Producto.PrecioCosto;
-                    gotoxy(77, Filas);
-                    cout << "Q." << Producto.PrecioVenta;
-                    gotoxy(96, Filas);
-                    cout << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a << endl;
+                gotoxy(65, Filas);
+               cout << V;
+               gotoxy(68, Filas);
+               cout << "Q." << Producto.PrecioCosto;
+               gotoxy(81, Filas);
+               cout << V;
+               gotoxy(85, Filas);
+               cout << "Q." << Producto.PrecioVenta;
+               gotoxy(98, Filas);
+               cout << V;
+               gotoxy(102, Filas);
+               cout << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a;
+               gotoxy(115, Filas);
+               cout << V << endl;
                     ++Filas;
                     ++FilasTotales;
                }
@@ -1278,15 +1395,16 @@ void SearchProductsForName()
           } while (feof(ArchivoProductos) == 0);
           if (encontrado == false)
           {
-               cout << "No se encontro" << endl;
+               gotoxy(4,FilasTotales+2);cout << "No se encontro" << endl;
           }
+                              gotoxy(4,FilasTotales);cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB << endl;
           fclose(ArchivoProductos);
      }
 }
 void SearchProductsForCode()
 {
      system("CLS");
-     int Filas = 6, FilasTotales = 6, encontradomarca = 0;
+     int Filas = 7, FilasTotales = 7, encontradomarca = 0;
      SetConsoleTitle("Listado De Productos");
      Productos Producto;
      Marcas Marca;
@@ -1308,55 +1426,98 @@ void SearchProductsForCode()
           cout << "Ingrese el codigo del producto que busca" << endl;
           cin >> aux;
           fflush(stdin);
-          SetConsoleTitle("Registros");
-          cout << "+--------------------------------------------------------------------------+" << endl;
-          gotoxy(7, 4);
+                SetConsoleTitle("Registros");
+
+            for (int a = 10; a <= 100; a++)
+          {
+               gotoxy(a, 3);
+               PUN;
+          }
+          gotoxy(35, 3);
+          cout << " L I S T A D O  D E  C O I N C I D E N C I A S";
+          gotoxy(4, 4);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4, 5);
           cout << V;
-          gotoxy(7, 4);
-          cout << "Cod.Producto";
-          gotoxy(30, 4);
-          cout << "Producto";
-          gotoxy(46, 4);
-          cout << "ID Marca";
-          gotoxy(57, 4);
-          cout << "Precio Costo";
-          gotoxy(77, 4);
-          cout << "Precio Venta";
-          gotoxy(96, 4);
-          cout << "Fecha.Ingreso";
-          gotoxy(1, 5);
-          cout << endl;
+          gotoxy(111, 5);
+          cout << V;
+          gotoxy(6, 5);
+          cout << "COD. PRODUCTO";
+          gotoxy(20, 5);
+          cout << V;
+          gotoxy(24, 5);
+          cout << "PRODUCTO";
+          gotoxy(36, 5);
+          cout << V;
+          gotoxy(37, 5);
+          cout << " ID MARCA";
+          gotoxy(47, 5);
+          cout << V;
+          gotoxy(54, 5);
+          cout << "MARCA";
+          gotoxy(65, 5);
+          cout << V;
+          gotoxy(67, 5);
+          cout << "PRECIO COSTO";
+          gotoxy(81, 5);
+          cout << V;
+          gotoxy(84, 5);
+          cout << "PRECIO VENTA";
+          gotoxy(98, 5);
+          cout << V;
+          gotoxy(100, 5);
+          cout << "FECHA. INGRESO";
+          gotoxy(115, 5);
+          cout << V;
+          gotoxy(4, 6);
+          separador2;
           fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
           do
           {
                if (aux == Producto.CodigoProducto)
                {
                     encontrado = true;
-                    gotoxy(7, Filas);
-                    cout << V;
-                    gotoxy(7, Filas);
-                    cout << Producto.CodigoProducto;
-                    gotoxy(30, Filas);
-                    cout << Producto.DescripcionProducto;
+                    gotoxy(4, Filas);
+               cout << V;
+               gotoxy(11, Filas);
+               cout << Producto.CodigoProducto;
+               gotoxy(20, Filas);
+               cout << V;
+               gotoxy(22, Filas);
+               cout << Producto.DescripcionProducto;
+               gotoxy(36, Filas);
+               cout << V;
                     rewind(ArchivoMarcas);
                     fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                     while (!feof(ArchivoMarcas))
                     {
                          if (Producto.idMarca == Marca.idMarca)
                          {
-                              gotoxy(46, Filas);
-                              cout << Marca.NombreMarca;
+                                 gotoxy(40, Filas);
+                         cout << Marca.idMarca;
+                         gotoxy(47, Filas);
+                         cout << V;
+                         gotoxy(50, Filas);
+                         cout << Marca.NombreMarca;
                               encontradomarca = 1;
                          }
                          fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                     }
 
-                    gotoxy(57, Filas);
-                    cout << "Q." << Producto.PrecioCosto;
-                    gotoxy(77, Filas);
-                    cout << "Q." << Producto.PrecioVenta;
-                    gotoxy(96, Filas);
-                    cout << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a << endl;
+                      gotoxy(65, Filas);
+               cout << V;
+               gotoxy(68, Filas);
+               cout << "Q." << Producto.PrecioCosto;
+               gotoxy(81, Filas);
+               cout << V;
+               gotoxy(85, Filas);
+               cout << "Q." << Producto.PrecioVenta;
+               gotoxy(98, Filas);
+               cout << V;
+               gotoxy(102, Filas);
+               cout << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a;
+               gotoxy(115, Filas);
+               cout << V << endl;
                     ++Filas;
                     ++FilasTotales;
                }
@@ -1364,8 +1525,9 @@ void SearchProductsForCode()
           } while (feof(ArchivoProductos) == 0);
           if (encontrado == false)
           {
-               cout << "No se encontro" << endl;
+                            gotoxy(4,FilasTotales+2);cout << "No se encontro" << endl;
           }
+                              gotoxy(4,FilasTotales);cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB << endl;
           fclose(ArchivoProductos);
      }
 }
@@ -1406,8 +1568,8 @@ BusquedaParaModificar:
                     }
                     fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                }
-               cout << "\n\t\t\t PRECIO COSTO: " << Producto.PrecioCosto;
-               cout << "\n\t\t\t PRECIO VENTA: " << Producto.PrecioVenta;
+               cout << "\n\t\t\t PRECIO COSTO: Q." << Producto.PrecioCosto;
+               cout << "\n\t\t\t PRECIO VENTA: Q." << Producto.PrecioVenta;
                cout << "\n\t\t\t FECHA DE INGRESO: " << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a << endl;
                cout << endl;
                cout << "\n\t\t\t\tESTE ES EL PRODUCTO QUE DESEA MODIFICAR S | N  = ";
@@ -1834,6 +1996,7 @@ bool ValidacionNIT(string nit)
 
 void Facture()
 {
+     fflush(stdin);
           SetConsoleTitle("FACTURA");
           Clientes Cliente;
           Facturas Factura;
@@ -2591,7 +2754,7 @@ void MenuAyuda()
 
                case '3':
                {
-                    getch();
+                    system("start DiagramaEntidadRelacion.png");
                     MenuAyuda();
                     break;
                }
@@ -2627,7 +2790,7 @@ FILE *Facturation=fopen("Factura.dat","rb");
 fread(&Factura,sizeof(Facturas),1,Facturation);
 while(!feof(Facturation)){
 cout<<Factura.NoFactura<<endl;
-cout<<Factura.NITFactura<<endl;
+cout<<Factura.NITF  actura<<endl;
 cout<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
 fread(&Factura,sizeof(Facturas),1,Facturation);
 }
