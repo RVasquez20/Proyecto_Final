@@ -61,6 +61,11 @@ struct FacturasDetalle
 };
 typedef FacturasDetalle FacturaDetalle;
 
+struct Supervisores{
+char usuario[50],Pass[50],nombre[50],Dir[50];
+int Tel;
+};
+typedef Supervisores Datos;
 //Variables Globales para la fecha y hora
 time_t tSac = time(NULL);
 struct tm *tmP = localtime(&tSac);
@@ -70,6 +75,7 @@ int IA = 0;        //Incremento Automatico XD
 //Prototipos de Funciones Del Programa
 void MenuPrincipal();
 bool VerificadorDeNumeros(string);
+bool VerificadorDeNumeros2(string);
 void Minusculas(string &);
 void MenuMarcas();
 void IngresoDeMarcas();
@@ -77,6 +83,7 @@ void MostrarMarcas();
 void ModificarMarca();
 void EliminarMarca();
 void MenuInventario();
+void MenuIngresoProductos();
 void IngresoProductos();
 void MostrarProductos();
 void BuscarProductos();
@@ -97,10 +104,17 @@ void MenuBusquedaFactura();
 void SearchWhitCorrelative();
 void SearchFactureWhitNIT();
 void MenuAyuda();
-void mostrar();
 void Actualizacion(int, int);
-main()
-{
+void Errores();
+void login();
+bool loginAdmins();
+void MenuAdmin();
+void Admin();
+void MostrarSupervisores();
+void EliminarSupervisores();
+void generador(int );
+void ImportacionCSV();
+main(){
      system("color 0A");
      /*SetConsoleTitle("Supermercado UMG");
     system("color 09");
@@ -123,15 +137,24 @@ main()
 */
      MenuPrincipal();
 }
-bool VerificadorDeNumeros(string str)
-{
+bool VerificadorDeNumeros(string str){
      for (int i = 0; i < str.length(); i++)
           if (isdigit(str[i]) == false)
                return false;
      return true;
 }
-void MenuPrincipal()
-{
+bool VerificadorDeNumeros2(string str){
+     int i=0,inicio=0;
+     if(str[0]=='-'){
+          inicio=1;
+     }else if(str[0]=='\n'){return false;}else{
+   for (i=inicio; i < str.length(); i++)
+   if (isdigit(str[i])==false)
+      return false;
+      return true;
+     }
+}
+void MenuPrincipal(){
      char opc;
      SetConsoleTitle("MENU PRINCIPAL");
      system("CLS");
@@ -274,6 +297,7 @@ void MenuPrincipal()
      }
      case 27:
      {
+          gotoxy(7,31);
           exit(0);
           break;
      }
@@ -286,8 +310,7 @@ void MenuPrincipal()
      }
      }
 }
-void MenuMarcas()
-{
+void MenuMarcas(){
      char opc;
      SetConsoleTitle("MENU DE MARCAS");
      system("CLS");
@@ -432,8 +455,7 @@ void MenuMarcas()
           }
      }
 }
-void IngresoDeMarcas()
-{
+void IngresoDeMarcas(){
      fflush(stdin);
      SetConsoleTitle("INGRESO DE MARCAS");
      Marcas Marca;
@@ -466,7 +488,7 @@ loop:
                gotoxy(a, 9);
                PUN;
           }
-          cout << "\n\n\t\t\t   * EL INGRESO DE LETRAS ES INCORRECTO, VALIDO UNICAMENTE NUMEROS *" << endl;
+          cout << "\n\n\t   * EL INGRESO DE LETRAS O NUMEROS NEGATIVOS ES INCORRECTO, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
           getch();
           system("CLS");
           goto loop;
@@ -507,8 +529,7 @@ loop:
      cout << "\n\n\t\t\t\t\t\t* GUARDADO EXITOSAMENTE *" << endl;
      fclose(ArchivoMarcas);
 }
-void MostrarMarcas()
-{
+void MostrarMarcas(){
      system("CLS");
      int Filas = 7, FilasTotales = 7;
      SetConsoleTitle("LISTADO DE MARCAS");
@@ -567,8 +588,7 @@ void MostrarMarcas()
           fclose(ArchivoMarcas);
      }
 }
-void ModificarMarca()
-{
+void ModificarMarca(){
      SetConsoleTitle("MODIFICACION DE MARCAS");
 inicio:
      fflush(stdin);
@@ -589,7 +609,7 @@ inicio:
      }
      else
      {
-          cout << "\n\n\t\t\t   * EL INGRESO DE LETRAS ES INCORRECTO, VALIDO UNICAMENTE NUMEROS *" << endl;
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
           getch();
           system("CLS");
           goto inicio;
@@ -670,8 +690,7 @@ inicio:
      fclose(ArchivoMarcas);
      Actualizacion(aux2, AuxIdMarca);
 }
-void Actualizacion(int idnew, int idold)
-{
+void Actualizacion(int idnew, int idold){
      Productos Producto;
      FILE *Inventario = fopen("Productos.dat", "r+b");
      FILE *Temporal = fopen("temporal.dat", "a+b");
@@ -702,19 +721,31 @@ void Actualizacion(int idnew, int idold)
      remove("Productos.dat");
      rename("temporal.dat", "Productos.dat");
 }
-void EliminarMarca()
-{
+void EliminarMarca(){
      SetConsoleTitle("ELIMINACION DE MARCAS");
      fflush(stdin);
      Marcas Marca;
      FILE *ArchivoMarcas = fopen("Marcas.dat", "rb");
      FILE *Temporal = fopen("Temporal.dat", "wb");
+     loop:
      int AuxIdMarca, existe = 0;
+     string AUX;
      system("CLS");
      fflush(stdin);
      MostrarMarcas();
      cout << "\n\n\n\t\t ID DE LA MARCA QUE DESEA ELIMINAR -> ";
-     cin >> AuxIdMarca;
+     getline(cin,AUX);
+      if (VerificadorDeNumeros(AUX))
+     {
+          AuxIdMarca = atoi(AUX.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto loop;
+     }
      fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
      while (!feof(ArchivoMarcas))
      {
@@ -749,8 +780,7 @@ void EliminarMarca()
      remove("Marcas.dat");
      rename("Temporal.dat", "Marcas.dat");
 }
-void MenuInventario()
-{
+void MenuInventario(){
      char opc;
      SetConsoleTitle("MENU DE INVENTARIO");
      system("CLS");
@@ -858,7 +888,7 @@ void MenuInventario()
           {
           case '1':
           {
-               IngresoProductos();
+               MenuIngresoProductos();
                getch();
                MenuInventario();
                break;
@@ -912,8 +942,7 @@ void MenuInventario()
           }
      }
 }
-void IngresoProductos()
-{
+void IngresoProductos(){
      fflush(stdin);
      SetConsoleTitle("INGRESO DE PRODUCTOS");
      Productos Producto;
@@ -924,8 +953,21 @@ InicioIngresoProductos:
 codigoProducto:
      MostrarMarcas();
      int auxCodigoProducto, encontradoCodigoProducto = 0, auxIdMarca;
+     string AUX,AUX2;
      cout << "\n\n\t\tCODIGO DEL PRODUCTO -> ";
-     cin >> auxCodigoProducto;
+     getline(cin,AUX);
+     fflush(stdin);
+      if (VerificadorDeNumeros(AUX))
+     {
+          auxCodigoProducto = atoi(AUX.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto InicioIngresoProductos;
+     }
      fflush(stdin);
      rewind(ArchivoProductos);
      fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
@@ -954,7 +996,18 @@ IdMarca:
      fflush(stdin);
      int encontradoIdMarca = 0;
      cout << "\n\n\t\tID DE LA MARCA DEL PRODUCTO -> ";
-     cin >> auxIdMarca;
+     getline(cin,AUX2);
+     fflush(stdin);
+      if (VerificadorDeNumeros(AUX2))
+     {
+          auxIdMarca = atoi(AUX2.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto IdMarca;
+     }
      fflush(stdin);
      fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
      do
@@ -983,14 +1036,50 @@ IdMarca:
      int formatofecha = 0;
      do
      {
+          string dia,mes,anio;
+          FechaDia:
           cout << "\n\n\t\tDIA QUE EL PRODUCTO INGRESO -> ";
-          cin >> Producto.FechaDeIngreso.d;
+          getline(cin,dia);fflush(stdin);
+           if (VerificadorDeNumeros(dia))
+     {
+          Producto.FechaDeIngreso.d = atoi(dia.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaDia;
+     }
           fflush(stdin);
+          FechaMes:
           cout << "\n\n\t\tMES QUE EL PRODUCTO INGRESO -> ";
-          cin >> Producto.FechaDeIngreso.m;
+          getline(cin,mes);fflush(stdin);
+           if (VerificadorDeNumeros(mes))
+     {
+          Producto.FechaDeIngreso.m= atoi(mes.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaMes;
+     }
           fflush(stdin);
+          FechaAnio:
           cout << "\n\n\t\tANIO QUE EL PRODUCTO INGRESO -> ";
-          cin >> Producto.FechaDeIngreso.a;
+          getline(cin,anio);fflush(stdin);
+           if (VerificadorDeNumeros(anio))
+     {
+          Producto.FechaDeIngreso.a= atoi(anio.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES   O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaAnio;
+     }
           fflush(stdin);
           if ((Producto.FechaDeIngreso.d > 0 && Producto.FechaDeIngreso.d < 32) && (Producto.FechaDeIngreso.m > 0 && Producto.FechaDeIngreso.m < 13) && (Producto.FechaDeIngreso.a > 1999 && Producto.FechaDeIngreso.a < 2101))
           {
@@ -1003,7 +1092,7 @@ IdMarca:
      } while (formatofecha == 0);
      fwrite(&Producto, sizeof(Productos), 1, ArchivoProductos);
      cout << "\n\n\t\t\t\t\tDESEA INGRESAR OTRO PRODUCTO? (S | N) -> ";
-     cin >> opc;
+     opc=getch();fflush(stdin);
      if (opc == 's' || opc == 'S')
      {
           goto InicioIngresoProductos;
@@ -1012,8 +1101,7 @@ IdMarca:
      fclose(ArchivoMarcas);
      fclose(ArchivoProductos);
 }
-void MostrarProductos()
-{
+void MostrarProductos(){
      system("CLS");
      int Filas = 6, FilasTotales = 6, encontradomarca = 0;
      SetConsoleTitle("LISTADO DE PRODUCTOS");
@@ -1135,8 +1223,7 @@ void MostrarProductos()
           fclose(ArchivoMarcas);
      }
 }
-void BuscarProductos()
-{
+void BuscarProductos(){
       char opc;
           SetConsoleTitle("MENU BUSQUEDA DE PRODUCTOS");
           system("CLS");
@@ -1264,8 +1351,7 @@ void BuscarProductos()
           }
      }
 }
-void SearchProductsForName()
-{
+void SearchProductsForName(){
 
      system("CLS");
      int Filas = 7, FilasTotales = 7, encontradomarca = 0;
@@ -1288,7 +1374,7 @@ void SearchProductsForName()
           bool encontrado = false;
 
           fflush(stdin);
-          cout << "Ingrese el nombre del producto que busca" << endl;
+          cout << "\n\n\n\t\t Ingrese el nombre del producto que buscar" << endl;
           getline(cin, aux);
           fflush(stdin);
           Minusculas(aux);
@@ -1401,8 +1487,7 @@ void SearchProductsForName()
           fclose(ArchivoProductos);
      }
 }
-void SearchProductsForCode()
-{
+void SearchProductsForCode(){
      system("CLS");
      int Filas = 7, FilasTotales = 7, encontradomarca = 0;
      SetConsoleTitle("Listado De Productos");
@@ -1418,13 +1503,25 @@ void SearchProductsForCode()
      }
      else
      {
+          loop:
           fflush(stdin);
           int aux = 0;
+          string AUX;
           bool encontrado = false;
           system("CLS");
           fflush(stdin);
-          cout << "Ingrese el codigo del producto que busca" << endl;
-          cin >> aux;
+          cout << "\n\n\n\t\t Ingrese el codigo del producto que buscar" << endl;
+          getline(cin,AUX);
+          if (VerificadorDeNumeros(AUX))
+     {
+          aux= atoi(AUX.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto loop;
+     }
           fflush(stdin);
                 SetConsoleTitle("Registros");
 
@@ -1531,8 +1628,7 @@ void SearchProductsForCode()
           fclose(ArchivoProductos);
      }
 }
-void ModificarProductos()
-{
+void ModificarProductos(){
      char Eleccion;
      fflush(stdin);
      SetConsoleTitle("MODIFICACION DE PRODUCTOS");
@@ -1546,8 +1642,21 @@ BusquedaParaModificar:
      rewind(ArchivoProductos);
      rewind(ArchivoMarcas);
      int AuxBusquedaCodigoProducto = 0, EncontradoCodigoaModificar = 0;
+     string AUXP,AuxM;
      cout << "\n\n\n\t\t CODIGO DEL PRODUCTO QUE DESEA MODIFICAR -> ";
-     cin >> AuxBusquedaCodigoProducto;
+     getline(cin,AUXP);
+     fflush(stdin);
+      if (VerificadorDeNumeros(AUXP))
+     {
+          AuxBusquedaCodigoProducto = atoi(AUXP.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto BusquedaParaModificar;
+     }
      fflush(stdin);
      fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
      while (!feof(ArchivoProductos))
@@ -1573,7 +1682,7 @@ BusquedaParaModificar:
                cout << "\n\t\t\t FECHA DE INGRESO: " << Producto.FechaDeIngreso.d << "/" << Producto.FechaDeIngreso.m << "/" << Producto.FechaDeIngreso.a << endl;
                cout << endl;
                cout << "\n\t\t\t\tESTE ES EL PRODUCTO QUE DESEA MODIFICAR S | N  = ";
-               cin >> Eleccion;
+               Eleccion=getch();
                fflush(stdin);
                if (Eleccion == 'N' || Eleccion == 'n')
                {
@@ -1584,8 +1693,20 @@ BusquedaParaModificar:
           codigoProducto:
                MostrarMarcas();
                int auxCodigoProducto, encontradoCodigoProducto = 0, auxIdMarca;
+               string AUX;
                cout << "\n\t\t CODIGO NUEVO DEL PRODUCTO -> ";
-               cin >> auxCodigoProducto;
+               getline(cin,AUX);
+               fflush(stdin);
+                if (VerificadorDeNumeros(AUX))
+     {
+          auxCodigoProducto = atoi(AUX.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t  * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto codigoProducto;
+     }
                fflush(stdin);
                rewind(ArchivoProductos);
                fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
@@ -1615,8 +1736,20 @@ BusquedaParaModificar:
                rewind(ArchivoMarcas);
                fflush(stdin);
                int encontradoIdMarca = 0;
-               cout << "\n\t\t ID DE LA MARCAR DEL PRODUCTO -> ";
-               cin >> auxIdMarca;
+               cout << "\n\t\t ID DE LA MARCA DEL PRODUCTO -> ";
+               getline(cin,AuxM);
+               fflush(stdin);
+                if (VerificadorDeNumeros(AuxM))
+     {
+          auxIdMarca= atoi(AuxM.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto IdMarca;
+     }
                fflush(stdin);
                fread(&Marca, sizeof(Marcas), 1, ArchivoMarcas);
                do
@@ -1645,14 +1778,53 @@ BusquedaParaModificar:
                int formatofecha = 0;
                do
                {
-                    cout << "\n\t\t DIA QUE EL PRODUCTO INGRESO -> ";
-                    cin >> Producto.FechaDeIngreso.d;
-                    fflush(stdin);
-                    cout << "\n\t\t MES QUE EL PRODUCTO INGRESO -> ";
-                    cin >> Producto.FechaDeIngreso.m;
-                    fflush(stdin);
-                    cout << "\n\t\t ANIO QUE EL PRODUCTO INGRESO -> ";
-                    cin >> Producto.FechaDeIngreso.a;
+                        string dia,mes,anio;
+          FechaDia:
+          cout << "\n\n\t\tDIA QUE EL PRODUCTO INGRESO -> ";
+          getline(cin,dia);
+          fflush(stdin);
+           if (VerificadorDeNumeros(dia))
+     {
+          Producto.FechaDeIngreso.d = atoi(dia.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t  * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaDia;
+     }
+          fflush(stdin);
+          FechaMes:
+          cout << "\n\n\t\tMES QUE EL PRODUCTO INGRESO -> ";
+          getline(cin,mes);
+          fflush(stdin);
+           if (VerificadorDeNumeros(mes))
+     {
+          Producto.FechaDeIngreso.m= atoi(mes.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaMes;
+     }
+          fflush(stdin);
+          FechaAnio:
+          cout << "\n\n\t\tANIO QUE EL PRODUCTO INGRESO -> ";
+          getline(cin,anio);
+          fflush(stdin);
+           if (VerificadorDeNumeros(anio))
+     {
+          Producto.FechaDeIngreso.a= atoi(anio.c_str());
+     }
+     else
+     {
+
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto FechaAnio;
+     }
                     fflush(stdin);
                     if ((Producto.FechaDeIngreso.d > 0 && Producto.FechaDeIngreso.d < 32) && (Producto.FechaDeIngreso.m > 0 && Producto.FechaDeIngreso.m < 13) && (Producto.FechaDeIngreso.a > 1999 && Producto.FechaDeIngreso.a < 2101))
                     {
@@ -1680,8 +1852,8 @@ BusquedaParaModificar:
      fclose(ArchivoProductos);
      fclose(ArchivoMarcas);
 }
-void EliminarProducto()
-{
+void EliminarProducto(){
+fflush(stdin);
      Productos Producto;
      SetConsoleTitle("ELIMINACION DE PRODUCTOS");
      FILE *ArchivoProductos = fopen("Productos.dat", "rb");
@@ -1691,8 +1863,19 @@ BusquedaDeCodigoParaEliminar:
      MostrarProductos();
      rewind(ArchivoProductos);
      int EncontradoCodigo = 0, AuxCodigoProducto = 0;
+     string AUX;
      cout << "\n\n\n\t\t CODIGO DEL PRODUCTO QUE DESEA ELIMINAR -> ";
-     cin >> AuxCodigoProducto;
+     getline(cin,AUX);
+     if (VerificadorDeNumeros(AUX))
+     {
+          AuxCodigoProducto= atoi(AUX.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto BusquedaDeCodigoParaEliminar;
+     }
      fflush(stdin);
      fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
      while (!feof(ArchivoProductos))
@@ -1721,14 +1904,24 @@ BusquedaDeCodigoParaEliminar:
      rename("Temporal.dat", "Productos.dat");
 }
 //-------------------CODIGO DE BARRA-------------------
-void Codigo_barra()
-{
+void Codigo_barra(){
      system("CLS");
      SetConsoleTitle("CODIGO DE BARRA");
      MostrarProductos();
      int cp;
+     string AUX;
      cout << "\n\n\t\tINGRESE EL CODIGO -> ";
-     cin >> cp;
+     getline(cin,AUX);
+     if (VerificadorDeNumeros(AUX))
+     {
+          cp= atoi(AUX.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          Codigo_barra();
+     }
 
      FILE *ArchivoProductos = fopen("Productos.dat", "rb");
 
@@ -1779,8 +1972,7 @@ void Codigo_barra()
      remove("IMPRIMIR/Codigo_barra/Codigo_barra/bin/Debug/imprimir.txt");
 }
 
-void MenuFacturas()
-{
+void MenuFacturas(){
      char opc;
      SetConsoleTitle("MENU DE FACTURA");
      system("CLS");
@@ -1884,7 +2076,6 @@ void MenuFacturas()
           {
                Facture();
                ProductosAComprar();
-               //FacturaDetalle
                getch();
                MenuFacturas();
                break;
@@ -1919,8 +2110,7 @@ void MenuFacturas()
           }
      }
 }
-bool ValidacionNIT(string nit)
-{
+bool ValidacionNIT(string nit){
           int tam = nit.size();
           bool ver;
           char frase[tam];
@@ -1993,9 +2183,7 @@ bool ValidacionNIT(string nit)
           }
           return real;
      }
-
-void Facture()
-{
+void Facture(){
      fflush(stdin);
           SetConsoleTitle("FACTURA");
           Clientes Cliente;
@@ -2004,6 +2192,11 @@ void Facture()
           FILE *Temporal = fopen("Impresion.txt", "w+");
           int EncontradoNit = 0;
           string Auxnit;
+           const char CF[]="CONSUMIDOR FINAL";
+     const char Dir[]="CIUDAD";
+     const char cfinal[]="c/f";
+     const char cfinal3[]="cf";
+     bool cf=false;
           do
           {
                system("CLS");
@@ -2016,8 +2209,14 @@ void Facture()
                cout << " R E G I S T R O  D E   N I T ";
                cout << "\n\n\t\t NIT -> ";
                getline(cin, Auxnit);
+               Minusculas(Auxnit);
                fflush(stdin);
-               ValidacionNIT(Auxnit);
+             if((strcmp(Auxnit.c_str(),cfinal)==0)||(strcmp(Auxnit.c_str(),cfinal3)==0)){
+    real=true;
+    cf=true;
+	}else{
+     ValidacionNIT(Auxnit);
+	}
 
           } while (real == false);
           fread(&Cliente, sizeof(Clientes), 1, Clients);
@@ -2037,11 +2236,12 @@ void Facture()
                     fwrite(&Factura, sizeof(Facturas), 1, Factures);
                     fclose(Factures);
                     system("CLS");
+
                     cout << "No.Factura " << Factura.NoFactura << "\t Fecha : " << Factura.FechaFactura.d << "/" << Factura.FechaFactura.m << "/" << Factura.FechaFactura.a << endl;
                     cout << "NIT: " << Factura.NITFactura << endl;
                     cout << "Cliente: " << Cliente.NombreCliente << endl;
                     cout << "Direccion: " << Cliente.DireccionCliente << endl;
-                    cout << "-------------------------------------------" << endl;
+                    cout << "--------------------------------------------------" << endl;
                     fprintf(Temporal, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
                     fprintf(Temporal, "NIT: %s\n", Factura.NITFactura);
                     fprintf(Temporal, "Cliente: %s\n", Cliente.NombreCliente);
@@ -2051,7 +2251,7 @@ void Facture()
                fread(&Cliente, sizeof(Clientes), 1, Clients);
           }
 
-          if (EncontradoNit == 0)
+          if ((EncontradoNit==0)&&(!cf))
           {
                fflush(stdin);
                IA = 1;
@@ -2078,19 +2278,48 @@ void Facture()
                cout << "NIT: " << Factura.NITFactura << endl;
                cout << "Cliente: " << Cliente.NombreCliente << endl;
                cout << "Direccion: " << Cliente.DireccionCliente << endl;
-               cout << "-------------------------------------------" << endl;
+               cout << "---------------------------------------------------" << endl;
                fprintf(Temporal, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
                fprintf(Temporal, "NIT: %s\n", Factura.NITFactura);
                fprintf(Temporal, "Cliente: %s\n", Cliente.NombreCliente);
                fprintf(Temporal, "Direccion: %s\n", Cliente.DireccionCliente);
-               fprintf(Temporal, "-------------------------------------------------\n");
-          }
-
+               fprintf(Temporal, "--------------------------------------------------------\n");
+          }else
+if((EncontradoNit==0)&&(cf)){
+fflush(stdin);
+IA=1;
+fflush(stdin);
+strcpy(Cliente.NombreCliente,CF);
+fflush(stdin);
+strcpy(Cliente.DireccionCliente,Dir);
+fflush(stdin);
+strcpy(Cliente.NIT,cfinal);
+fflush(stdin);
+    fflush(stdin);
+    Factura.NoFactura=Contador(IA);
+    FILE *Factures=fopen("Factura.dat","a+b");
+    strcpy(Factura.NITFactura,cfinal);
+    Factura.FechaFactura.d=tmP->tm_mday;
+    Factura.FechaFactura.m=tmP->tm_mon+1;
+    Factura.FechaFactura.a=tmP->tm_year+1900;
+    fwrite(&Factura,sizeof(Facturas),1,Factures);
+    fclose(Factures);
+    system("CLS");
+    cout<<"No.Factura "<<Factura.NoFactura<<"\t Fecha : "<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
+    cout<<"NIT: "<<Factura.NITFactura<<endl;
+    cout<<"Cliente: "<<Cliente.NombreCliente<<endl;
+    cout<<"Direccion: "<<Cliente.DireccionCliente<<endl;
+    cout<<"-------------------------------------------"<<endl;
+        fprintf(Temporal,"No.Factura %d \tFecha: %d%d%d\n",Factura.NoFactura,Factura.FechaFactura.d,Factura.FechaFactura.m,Factura.FechaFactura.a);
+    fprintf(Temporal,"NIT: %s\n",Factura.NITFactura);
+    fprintf(Temporal,"Cliente: %s\n",Cliente.NombreCliente);
+    fprintf(Temporal,"Direccion: %s\n",Cliente.DireccionCliente);
+    fprintf(Temporal,"-------------------------------------------------\n");
+}
           fclose(Clients);
           fclose(Temporal);
      }
-int Contador(int valor)
-{
+int Contador(int valor){
           Facturas Factura;
           FILE *Factures = fopen("Factura.dat", "a+b");
           fread(&Factura, sizeof(Facturas), 1, Factures);
@@ -2102,8 +2331,7 @@ int Contador(int valor)
           fclose(Factures);
           return valor;
      }
-void ProductosAComprar()
-{
+void ProductosAComprar(){
           FILE *Details = fopen("factura_detalle.dat", "a+b");
           FILE *Temporal = fopen("Impresion.txt", "a+");
           Facturas Factura;
@@ -2111,19 +2339,80 @@ void ProductosAComprar()
           Productos Producto;
           FacturasDetalle FacturaDetalle;
           double subtotal = 0;
-          int AuxCodigo = 0, Contador2 = 0;
+          int AuxCodigo = 0, Contador2 = 0,AuxCodigo2=0;
+          bool more=true;
           gotoxy(0, 9);
-          cout << "No.\tCodigo Producto\tDescripcion\tSubtotal" << endl;
-          fprintf(Temporal, "No.\tCodigo\tProducto\tDescripcion\tSubtotal\n");
+          cout << "No.\tCodigo         \tDescripcion\tSubtotal" << endl;
+          fprintf(Temporal, "No.  Codigo \t   Descripcion  \t    Subtotal\n");
           FacturaDetalle.idProductos = new int[100];
           FacturaDetalle.PrecioVenta = new double[100];
           do
           {
+               loop:
+               fflush(stdin);
+               string AUXC;
                int Cantidad = 0;
                gotoxy(0, 8);
-               cout << "    ";
+               cout << "                         ";
                gotoxy(0, 8);
-               cin >> AuxCodigo;
+               getline(cin,AUXC);
+               fflush(stdin);
+               if(strcmp(AUXC.c_str(),"admin")==0){
+          gotoxy(0,8);cout<<"                 ";
+     AuxCodigo=-1;
+}else
+     if (VerificadorDeNumeros(AUXC))
+     {
+          AuxCodigo= atoi(AUXC.c_str());
+     }
+     else
+     {
+
+          goto loop;
+     }
+     if(AuxCodigo==0){
+          more=false;
+     }
+     if(AuxCodigo==-1){
+     login();
+     fflush(stdin);
+     gotoxy(0,8);cout<<"Ingrese el producto a anular:";
+gotoxy(37,8);cin>>AuxCodigo2;
+gotoxy(0,8);cout<<"                                                ";
+fflush(stdin);
+FILE *Products=fopen("Productos.dat","rb");
+fread(&Producto,sizeof(Productos),1,Products);
+while(!feof(Products)){
+     if(AuxCodigo2==Producto.CodigoProducto){
+          Contador2++;
+     Cantidad++;
+     FacturaDetalle.idProductos[Cantidad]=AuxCodigo2;
+gotoxy(0,11+Contador2);cout<<Contador2<<"\t(-)"<<Producto.CodigoProducto<<"\t"<<Producto.DescripcionProducto<<" Marca ";
+fprintf(Temporal,"%d\t%d\t%s\t",Contador2,Producto.CodigoProducto,Producto.DescripcionProducto);
+      FILE *Marcs=fopen("Marcas.dat","rb");
+      fread(&Marca,sizeof(Marca),1,Marcs);
+      while(!feof(Marcs)){
+          if(Producto.idMarca==Marca.idMarca){
+           cout<<Marca.NombreMarca;
+           fprintf(Temporal,"Marca %s \t",Marca.NombreMarca);
+          }
+          fread(&Marca,sizeof(Marca),1,Marcs);
+      }
+      fclose(Marcs);
+      cout<<"\t Q."<<Producto.PrecioVenta<<endl;
+      FacturaDetalle.PrecioVenta[Cantidad]=Producto.PrecioVenta;
+      fprintf(Temporal,"Q. %.2f \n",Producto.PrecioVenta);
+      subtotal=subtotal-Producto.PrecioVenta;
+      FacturaDetalle.IdFacturaDetalle=Contador(0);
+      FacturaDetalle.NoFactura=Factura.NoFactura;
+      fwrite(&FacturaDetalle,sizeof(FacturasDetalle),1,Details);
+     }
+     fread(&Producto,sizeof(Productos),1,Products);
+}
+
+fclose(Products);
+
+}else{
                fflush(stdin);
                FILE *Products = fopen("Productos.dat", "rb");
                fread(&Producto, sizeof(Productos), 1, Products);
@@ -2136,7 +2425,7 @@ void ProductosAComprar()
                          FacturaDetalle.idProductos[Cantidad] = AuxCodigo;
                          gotoxy(0, 11 + Contador2);
                          cout << Contador2 << "\t" << Producto.CodigoProducto << "\t" << Producto.DescripcionProducto << " Marca ";
-                         fprintf(Temporal, "%d\t%d\t%s\t", Contador2, Producto.CodigoProducto, Producto.DescripcionProducto);
+                         fprintf(Temporal, "%d \t %d \t %s ", Contador2, Producto.CodigoProducto, Producto.DescripcionProducto);
                          FILE *Marcs = fopen("Marcas.dat", "rb");
                          fread(&Marca, sizeof(Marca), 1, Marcs);
                          while (!feof(Marcs))
@@ -2144,7 +2433,7 @@ void ProductosAComprar()
                               if (Producto.idMarca == Marca.idMarca)
                               {
                                    cout << Marca.NombreMarca;
-                                   fprintf(Temporal, "Marca %s \t", Marca.NombreMarca);
+                                   fprintf(Temporal, "Marca %s \t ", Marca.NombreMarca);
                               }
                               fread(&Marca, sizeof(Marca), 1, Marcs);
                          }
@@ -2161,20 +2450,21 @@ void ProductosAComprar()
                }
 
                fclose(Products);
-          } while (AuxCodigo != 0);
+}
+          } while (more);
           delete[] FacturaDetalle.idProductos;
           delete[] FacturaDetalle.PrecioVenta;
           gotoxy(0, 8);
-          cout << "    ";
+          cout << "                                                                                        ";
           gotoxy(0, 12 + Contador2);
           cout << "Total: Q." << subtotal << endl;
+          fprintf(Temporal,"---------------------------------------\n");
           fprintf(Temporal, "Total: Q. %.2f", subtotal);
           fclose(Details);
           fclose(Temporal);
           system("Start imprimir.exe");
      }
-void MenuBusquedaCliente()
-{
+void MenuBusquedaCliente(){
           char opc;
           SetConsoleTitle("MENU BUSQUEDA DE CLIENTES");
           system("CLS");
@@ -2302,13 +2592,13 @@ void MenuBusquedaCliente()
                }
           }
      }
-void SearchWhitName()
-{
+void SearchWhitName(){
           fflush(stdin);
           Clientes Cliente;
           FILE *Clients = fopen("Clientes.dat", "rb");
           string aux;
           string nombre;
+          int Filas = 9, FilasTotales = 9;
           bool encontrado = false;
           if (Clients == NULL)
           {
@@ -2333,8 +2623,14 @@ void SearchWhitName()
                fflush(stdin);
                Minusculas(aux);
                SetConsoleTitle("REGISTROS");
-               cout << "+--------------------------------------------------------------------------+" << endl;
-               cout << "NOMBRE \t\t\t\t   NIT\t\t\tDIRECCION" << endl;
+                gotoxy(4, 6);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4,7);cout<<V;
+               gotoxy(20,7);cout<<"NOMBRE";
+               gotoxy(44,7);cout<<V;
+                gotoxy(60,7);cout<<"DIRECCION";gotoxy(86,7);cout<<V;
+                 gotoxy(100,7);cout<<"NIT";gotoxy(115,7);cout<<V;
+               gotoxy(4,8);   cout << LTI << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << LTD << endl;
                fread(&Cliente, sizeof(Clientes), 1, Clients);
                do
                {
@@ -2344,27 +2640,38 @@ void SearchWhitName()
                     fflush(stdin);
                     if (nombre.find(aux) != string::npos)
                     {
-                         cout << Cliente.NombreCliente << "\t   " << Cliente.NIT << "\t        " << Cliente.DireccionCliente << endl;
-                         cout << "+-------------------------------------------------------------------------+" << endl;
+                         gotoxy(4,Filas);cout<<V;
+                            gotoxy(7,Filas);
+                         cout << Cliente.NombreCliente;
+                          gotoxy(44,Filas);cout<<V;
+                    gotoxy(50,Filas);
+                         cout<<Cliente.DireccionCliente;
+                         gotoxy(86,Filas);cout<<V;
+                         gotoxy(95,Filas);
+                         cout<<Cliente.NIT;
+                         gotoxy(115,Filas);cout<<V;
                          encontrado = true;
+                         Filas++;
+                         FilasTotales++;
                     }
                     fread(&Cliente, sizeof(Clientes), 1, Clients);
                } while (feof(Clients) == 0);
                if (encontrado == false)
                {
-                    cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
+                    gotoxy(4,FilasTotales+1); cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
                }
+                              gotoxy(4,FilasTotales);   cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB<< endl;
                fclose(Clients);
           }
      }
-void SearchClientWhitNIT()
-{
-          fflush(stdin);
+void SearchClientWhitNIT(){
+   fflush(stdin);
           Clientes Cliente;
           FILE *Clients = fopen("Clientes.dat", "rb");
           bool encontrado = false;
           string aux;
-          if (Clients == NULL)
+          int Filas=9,FilasTotales=9;
+          if (Facture == NULL)
           {
                SetConsoleTitle("Error 002");
                cout << "Error 002" << endl;
@@ -2373,7 +2680,6 @@ void SearchClientWhitNIT()
           }
           else
           {
-
                system("CLS");
                fflush(stdin);
                for (int a = 11; a <= 99; a++)
@@ -2381,35 +2687,51 @@ void SearchClientWhitNIT()
                     gotoxy(a, 3);
                     PUN;
                }
-               gotoxy(40, 3);
-               cout << " B U S Q U E D A  D E  C L I E NT E S ";
-               cout << "\n\n\t\t NIT DEL CLIENTE QUE DESEA BUSCAR -> ";
+               gotoxy(38, 3);
+               cout << " B U S Q U E D A  D E  C L I E N T E S ";
+               cout << "\n\n\t\t NIT QUE DESEA BUSCAR -> ";
                getline(cin, aux);
                fflush(stdin);
                SetConsoleTitle("REGISTROS");
-               cout << "+--------------------------------------------------------------------------+" << endl;
-               cout << "NOMBRE \t\t\t\t   NIT\t\t\tDIRECCION" << endl;
+                gotoxy(4, 6);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4,7);cout<<V;
+               gotoxy(20,7);cout<<"NOMBRE";
+               gotoxy(44,7);cout<<V;
+                gotoxy(62,7);cout<<"DIRECCION";gotoxy(86,7);cout<<V;
+                 gotoxy(100,7);cout<<"NIT";gotoxy(115,7);cout<<V;
+               gotoxy(4,8);   cout << LTI << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << LTD << endl;
                fread(&Cliente, sizeof(Clientes), 1, Clients);
                do
                {
                     fflush(stdin);
                     if (strcmp(aux.c_str(), Cliente.NIT) == 0)
                     {
-                         cout << Cliente.NombreCliente << "\t   " << Cliente.NIT << "\t        " << Cliente.DireccionCliente << endl;
-                         cout << "+-------------------------------------------------------------------------+" << endl;
+     gotoxy(4,Filas);cout<<V;
+                            gotoxy(7,Filas);
+                         cout << Cliente.NombreCliente;
+                          gotoxy(44,Filas);cout<<V;
+                    gotoxy(50,Filas);
+                         cout<<Cliente.DireccionCliente;
+                         gotoxy(86,Filas);cout<<V;
+                         gotoxy(95,Filas);
+                         cout<<Cliente.NIT;
+                         gotoxy(115,Filas);cout<<V;
                          encontrado = true;
+                         Filas++;
+                         FilasTotales++;
                     }
-                    fread(&Cliente, sizeof(Clientes), 1, Clients);
+                    fread(&Cliente, sizeof(Clientes), 1,Clients );
                } while (feof(Clients) == 0);
                if (encontrado == false)
                {
-                    cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
+                    gotoxy(4,FilasTotales+1); cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
                }
+                              gotoxy(4,FilasTotales);   cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB<< endl;
                fclose(Clients);
           }
      }
-void MenuBusquedaFactura()
-{
+void MenuBusquedaFactura(){
           char opc;
           SetConsoleTitle("MENU BUSQUEDA DE FACTURA");
           system("CLS");
@@ -2537,13 +2859,13 @@ void MenuBusquedaFactura()
                }
           }
      }
-void SearchWhitCorrelative()
-{
+void SearchWhitCorrelative(){
           fflush(stdin);
           Facturas Factura;
           FILE *Factures = fopen("Factura.dat", "rb");
           bool encontrado = false;
-          int aux = 0;
+          int aux = 0,Filas=9,FilasTotales=9;
+          string AUX;
           if (Factures == NULL)
           {
                SetConsoleTitle("Error 002");
@@ -2553,6 +2875,7 @@ void SearchWhitCorrelative()
           }
           else
           {
+               lop:
                system("CLS");
                fflush(stdin);
                for (int a = 11; a <= 99; a++)
@@ -2563,37 +2886,68 @@ void SearchWhitCorrelative()
                gotoxy(38, 3);
                cout << " B U S Q U E D A  D E  F A C T U R A S ";
                cout << "\n\n\t\t CORRELATIVO DE LA FACTURA QUE QUE DESEA BUSCAR -> ";
-               cin >> aux;
+               getline(cin,AUX);
+               if (VerificadorDeNumeros(AUX))
+     {
+          aux= atoi(AUX.c_str());
+     }
+     else
+     {
+          cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
+          getch();
+          goto lop;
+     }
                fflush(stdin);
                SetConsoleTitle("REGISTROS");
-               cout << "+--------------------------------------------------------------------------+" << endl;
-               cout << "No.Factura\t\tFecha\t\t       NIT" << endl;
+                             gotoxy(4, 6);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4,7);cout<<V;
+               gotoxy(20,7);cout<<"No.Factura";
+               gotoxy(44,7);cout<<V;
+                gotoxy(62,7);cout<<"Fecha";gotoxy(86,7);cout<<V;
+                 gotoxy(100,7);cout<<"NIT";gotoxy(115,7);cout<<V;
+               gotoxy(4,8);   cout << LTI << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << LTD << endl;
                fread(&Factura, sizeof(Facturas), 1, Factures);
                do
                {
                     fflush(stdin);
                     if (aux == Factura.NoFactura)
                     {
-                         cout << Factura.NoFactura << "\t                " << Factura.FechaFactura.d << "/" << Factura.FechaFactura.m << "/" << Factura.FechaFactura.a << "\t       " << Factura.NITFactura << endl;
-                         cout << "+-------------------------------------------------------------------------+" << endl;
+   gotoxy(4,Filas);cout<<V;
+                            gotoxy(24,Filas);
+                         cout << Factura.NoFactura;
+                          gotoxy(44,Filas);cout<<V;
+                    gotoxy(60,Filas);
+                         cout<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a;
+                         gotoxy(86,Filas);cout<<V;
+                         gotoxy(95,Filas);
+                         cout<<Factura.NITFactura;
+                         gotoxy(115,Filas);cout<<V;
+                         encontrado = true;
+                         Filas++;
+                         FilasTotales++;
                          encontrado = true;
                     }
                     fread(&Factura, sizeof(Facturas), 1, Factures);
                } while (feof(Factures) == 0);
                if (encontrado == false)
                {
-                    cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
+                    gotoxy(4,FilasTotales+1); cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
                }
+                              gotoxy(4,FilasTotales);   cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB<< endl;
                fclose(Factures);
           }
      }
-void SearchFactureWhitNIT()
-{
+void SearchFactureWhitNIT(){
           fflush(stdin);
           Facturas Factura;
           FILE *Facture = fopen("Factura.dat", "rb");
           bool encontrado = false;
           string aux;
+           const char cfinal[]="c/f";
+     const char cfinal3[]="cf";
+     bool cf=false;
+          int Filas=9,FilasTotales=9;
           if (Facture == NULL)
           {
                SetConsoleTitle("Error 002");
@@ -2603,6 +2957,7 @@ void SearchFactureWhitNIT()
           }
           else
           {
+               do{
                system("CLS");
                fflush(stdin);
                for (int a = 11; a <= 99; a++)
@@ -2615,30 +2970,57 @@ void SearchFactureWhitNIT()
                cout << "\n\n\t\t NIT QUE DESEA BUSCAR -> ";
                getline(cin, aux);
                fflush(stdin);
+                Minusculas(aux);
+               fflush(stdin);
+             if((strcmp(aux.c_str(),cfinal)==0)||(strcmp(aux.c_str(),cfinal3)==0)){
+    real=true;
+    cf=true;
+	}else{
+     ValidacionNIT(aux);
+	}
+
+          } while (real == false);
                SetConsoleTitle("REGISTROS");
-               cout << "+--------------------------------------------------------------------------+" << endl;
-               cout << "No.Factura\t\tFecha\t\t       NIT" << endl;
+                gotoxy(4, 6);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4,7);cout<<V;
+               gotoxy(20,7);cout<<"No.Factura";
+               gotoxy(44,7);cout<<V;
+                gotoxy(62,7);cout<<"Fecha";gotoxy(86,7);cout<<V;
+                 gotoxy(100,7);cout<<"NIT";gotoxy(115,7);cout<<V;
+               gotoxy(4,8);   cout << LTI << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << LTD << endl;
                fread(&Factura, sizeof(Facturas), 1, Facture);
                do
                {
                     fflush(stdin);
                     if (strcmp(aux.c_str(), Factura.NITFactura) == 0)
                     {
-                         cout << Factura.NoFactura << "\t                " << Factura.FechaFactura.d << "/" << Factura.FechaFactura.m << "/" << Factura.FechaFactura.a << "\t       " << Factura.NITFactura << endl;
-                         cout << "+-------------------------------------------------------------------------+" << endl;
+   gotoxy(4,Filas);cout<<V;
+                            gotoxy(24,Filas);
+                         cout << Factura.NoFactura;
+                          gotoxy(44,Filas);cout<<V;
+                    gotoxy(60,Filas);
+                         cout<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a;
+                         gotoxy(86,Filas);cout<<V;
+                         gotoxy(95,Filas);
+                         cout<<Factura.NITFactura;
+                         gotoxy(115,Filas);cout<<V;
+                         encontrado = true;
+                         Filas++;
+                         FilasTotales++;
                          encontrado = true;
                     }
                     fread(&Factura, sizeof(Facturas), 1, Facture);
                } while (feof(Facture) == 0);
                if (encontrado == false)
                {
-                    cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
+                    gotoxy(4,FilasTotales+1); cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
                }
+                              gotoxy(4,FilasTotales);   cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB<< endl;
                fclose(Facture);
           }
      }
-void MenuAyuda()
-{
+void MenuAyuda(){
           char opc;
           SetConsoleTitle("MENU DE AYUDA");
           system("CLS");
@@ -2683,17 +3065,17 @@ void MenuAyuda()
                gotoxy(a, 9);
                HOR;
           }
-          for (int a = 9; a <= 22; a++)
+          for (int a = 9; a <= 25; a++)
           {
                gotoxy(9, a);
                VER
           }
           for (int a = 10; a <= 101; a++)
           {
-               gotoxy(a, 22);
+               gotoxy(a, 25);
                HOR;
           }
-          for (int a = 9; a <= 22; a++)
+          for (int a = 9; a <= 25; a++)
           {
                gotoxy(110, a);
                VER
@@ -2702,9 +3084,9 @@ void MenuAyuda()
           cout << TOPE;
           gotoxy(110, 9);
           cout << EDA;
-          gotoxy(9, 22);
+          gotoxy(9, 25);
           cout << EIB;
-          gotoxy(110, 22);
+          gotoxy(110, 25);
           cout << EDB;
           for (int a = 10; a <= 20; a++)
           {
@@ -2723,12 +3105,16 @@ void MenuAyuda()
           gotoxy(35, 15);
           cout << V << " -->   [3] DIAGRAMA ENTIDAD RELACION            " << V;
           gotoxy(35, 17);
-          ARENBJ;
-          gotoxy(35, 21);
-          ABJ;
+          cout << V << " -->   [4] ADMINISTRADOR                        " << V;
           gotoxy(35, 19);
-          cout << V << "         <-- REGRESAR / ESC. SALIR              " << V;
+          cout << V << " -->   [5] CREDITOS                             " << V;
+          gotoxy(35, 21);
+          ARENBJ;
           gotoxy(35, 23);
+          ABJ;
+          gotoxy(35, 22);
+          cout << V << "         <-- REGRESAR / ESC. SALIR              " << V;
+          gotoxy(35, 24);
           opc = getch();
           if (opc == 8)
           {
@@ -2740,14 +3126,14 @@ void MenuAyuda()
                {
                case '1':
                {
-
+                    Errores();
                     getch();
                     MenuAyuda();
                     break;
                }
                case '2':
                {
-                    getch();
+                    system("start Manual_De_Usuario.pdf");
                     MenuAyuda();
                     break;
                }
@@ -2755,6 +3141,21 @@ void MenuAyuda()
                case '3':
                {
                     system("start DiagramaEntidadRelacion.png");
+                    MenuAyuda();
+                    break;
+               }
+                case '4':
+               {
+                    if(loginAdmins()){
+                 MenuAdmin();
+               }
+                    getch();
+                    MenuAyuda();
+                    break;
+               }
+                case '5':
+               {
+
                     MenuAyuda();
                     break;
                }
@@ -2773,40 +3174,717 @@ void MenuAyuda()
                }
           }
      }
-void Minusculas(string & s)
-{
+void Errores(){
+FILE *Error = fopen("Errores.txt", "r");
+     char c;
+     if (Error == NULL)
+     {
+          cout << "Error 001" << endl;
+     }
+     else
+     {
+          system("CLS");
+          while (!feof(Error))
+          {
+               c = fgetc(Error);
+               cout << c;
+          }
+          getch();
+          fclose(Error);
+     }
+}
+void Minusculas(string & s){
           int i;
           for (i = 0; i < s.length(); i++)
           {
                s[i] = tolower(s[i]);
           }
      }
-
-/*void mostrar(){
+void MenuAdmin(){
+     char opc;
+     SetConsoleTitle("MENU DE ADMINISTRADOR");
      system("CLS");
-     Facturas Factura;
-     Clientes Cliente;
-FILE *Facturation=fopen("Factura.dat","rb");
-fread(&Factura,sizeof(Facturas),1,Facturation);
-while(!feof(Facturation)){
-cout<<Factura.NoFactura<<endl;
-cout<<Factura.NITF  actura<<endl;
-cout<<Factura.FechaFactura.d<<"/"<<Factura.FechaFactura.m<<"/"<<Factura.FechaFactura.a<<endl;
-fread(&Factura,sizeof(Facturas),1,Facturation);
-}
-cout<<"---------------------------------------------------"<<endl;
-FILE *Clients=fopen("Clientes.dat","rb");
-fread(&Cliente,sizeof(Clientes),1,Clients);
-while(!feof(Clients)){
-cout<<Cliente.NombreCliente<<endl;
-cout<<Cliente.NIT<<endl;
-cout<<Cliente.DireccionCliente<<endl;
+     for (int a = 10; a <= 101; a++)
+     {
+          gotoxy(a, 5);
+          HOR;
+     }
+     for (int a = 5; a <= 6; a++)
+     {
+          gotoxy(9, a);
+          VER
+     }
+     for (int a = 11; a <= 99; a++)
+     {
+          gotoxy(a, 6);
+          PUN;
+     }
+     for (int a = 10; a <= 101; a++)
+     {
+          gotoxy(a, 7);
+          HOR;
+     }
+     gotoxy(50, 6);
+     cout << " A D M I N I S T R A D O R ";
+     for (int a = 5; a <= 6; a++)
+     {
+          gotoxy(110, a);
+          VER
+     }
+     gotoxy(9, 5);
+     cout << TOPE;
+     gotoxy(110, 5);
+     cout << EDA;
+     gotoxy(9, 7);
+     cout << EIB;
+     gotoxy(110, 7);
+     cout << EDB;
 
-fread(&Cliente,sizeof(Clientes),1,Clients);
-}
-fclose(Facturation);
-fclose(Clients);
+     for (int a = 10; a <= 101; a++)
+     {
+          gotoxy(a, 9);
+          HOR;
+     }
+     for (int a = 9; a <= 24; a++)
+     {
+          gotoxy(9, a);
+          VER
+     }
+     for (int a = 10; a <= 101; a++)
+     {
+          gotoxy(a, 24);
+          HOR;
+     }
+     for (int a = 9; a <= 24; a++)
+     {
+          gotoxy(110, a);
+          VER
+     }
+     gotoxy(9, 9);
+     cout << TOPE;
+     gotoxy(110, 9);
+     cout << EDA;
+     gotoxy(9, 24);
+     cout << EIB;
+     gotoxy(110, 24);
+     cout << EDB;
+     for (int a = 10; a <= 20; a++)
+     {
+          gotoxy(35, a);
+          VER
+     }
+     for (int a = 10; a <= 20; a++)
+     {
+          gotoxy(84, a);
+          VER
+     }
+     gotoxy(35, 11);
+     cout << V << " -->   [1] INGRESO DE SUPERVISOR                " << V;
+     gotoxy(35, 13);
+     cout << V << " -->   [2] LISTADO DE SUPERVISORES              " << V;
+     gotoxy(35, 15);
+     cout << V << " -->   [3] ELIMINACION DE SUPERVISORES          " << V;
+     gotoxy(35, 17);
+     ARENBJ;
+     gotoxy(35, 21);
+     ABJ;
+     gotoxy(35, 19);
+     cout << V << "         <-- REGRESAR / ESC. SALIR              " << V;
+     gotoxy(35, 23);
+     opc = getch();
+     if (opc == 8)
+     {
+          MenuPrincipal();
+     }
+     else
+     {
+          switch (opc)
+          {
+          case '1':
+          {
+               fflush(stdin);
+               Admin();
+               getch();
+               MenuAdmin();
+               break;
+          }
+          case '2':
+          {
+               MostrarSupervisores();
+               getch();
+               MenuAdmin();
+               break;
+          }
+          case '3':
+          {
+               EliminarSupervisores();
+                getch();
+               MenuAdmin();
+               break;
+          }
+
+          case 27:
+          {
+               exit(0);
+               break;
+          }
+          default:
+          {
+               cout << "\aOPCION INCORRECTA, ELIJA NUEVAMENTE" << endl;
+               getch();
+              MenuAdmin();
+               break;
+          }
+          }
+     }
 
 }
+void login(){
+Supervisores Datos;
+loop:
+     SetConsoleTitle("Login");
+     int enc=0;
+     char b;
+     char ch;
+     string PAS="",US="";
+     gotoxy(55, 30);
+     cout << "LOGIN" << endl;
+     gotoxy(45, 31);
+     cout << "Ingrese el usuario" << endl;
+     gotoxy(45, 32);
+     getline(cin,US);
+     fflush(stdin);
+     gotoxy(45, 33);
+     cout << "Ingrese La Contrasenia " << endl;
+     gotoxy(45, 34);
+     ch = getch();
+     while (ch != 13)
+     {
+          if (ch != 8)
+          {
+               PAS.push_back(ch);
+               cout << "*";
+          }
+          else
+          {
+               if (PAS.length() > 0)
+               {
+                    cout << "\b \b";
+                    PAS = PAS.substr(0, PAS.length() - 1);
+               }
+          }
+          ch = getch();
+     }
 
-*/
+     fflush(stdin);
+     FILE *Manager=fopen("Managers.dat","a+b");
+     fread(&Datos,sizeof(Supervisores),1,Manager);
+     while(!feof(Manager)){
+     if ((strcmp(US.c_str(), Datos.usuario) == 0) && (strcmp(PAS.c_str(),Datos.Pass)==0))
+     {
+          enc=1;
+          gotoxy(45, 17);
+          cout << "Bienvenido ";
+          b = 250;
+          for (int i = 0; i <= 3; i++)
+          {
+               cout << b;
+               Sleep(1000);
+          }
+          Sleep(200);
+            gotoxy(45,17);cout<<"                                                                "<<endl;
+                              gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;
+
+     }
+     fread(&Datos,sizeof(Supervisores),1,Manager);
+     }
+     if(enc==0){
+                           gotoxy(45,17);cout<<"                                                                "<<endl;
+                              gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;
+          goto loop;
+     }
+     fclose(Manager);
+}
+void Admin(){
+     fflush(stdin);
+Supervisores Datos;
+FILE *Managers=fopen("Managers.dat","a+b");
+fflush(stdin);
+system("CLS");
+
+loop:
+int duplicado=0;
+string us,pas,name,dire,tel;
+char ch,opc2;
+
+cout<<"ingrese el usuario que tendra"<<endl;
+getline(cin,us);
+fflush(stdin);
+rewind(Managers);
+fread(&Datos,sizeof(Supervisores),1,Managers);
+while(!feof(Managers)){
+     if(strcmp(us.c_str(),Datos.usuario)==0){
+               duplicado=1;
+          cout<<"Usuario ya existente"<<endl;
+     goto loop;
+     fflush(stdin);
+     }
+     fread(&Datos,sizeof(Supervisores),1,Managers);
+}
+if(duplicado==0){
+          fflush(stdin);
+cout<<"ingrese el nombre que tendra"<<endl;
+getline(cin,name);
+strcpy(Datos.nombre,name.c_str());
+fflush(stdin);
+
+cout<<"ingrese el telefono que tendra"<<endl;
+getline(cin,tel);
+Datos.Tel=atoi(tel.c_str());
+fflush(stdin);
+cout<<"ingrese la direccion que tendra"<<endl;
+getline(cin,dire);
+strcpy(Datos.Dir,dire.c_str());
+fflush(stdin);
+fflush(stdin);
+strcpy(Datos.usuario,us.c_str());
+fflush(stdin);
+opc22:
+cout<<"Desea password manual o automatico? M/A"<<endl;
+cin>>opc2;
+fflush(stdin);
+if(opc2=='M'||opc2=='m'){
+cout<<"ingrese el password que tendra"<<endl;
+ch = getch();
+     while (ch != 13)
+     {
+          if (ch != 8)
+          {
+               pas.push_back(ch);
+               cout << "*";
+          }
+          else
+          {
+               if (pas.length() > 0)
+               {
+                    cout << "\b \b";
+                    pas = pas.substr(0, pas.length() - 1);
+               }
+          }
+          ch = getch();
+     }
+     fflush(stdin);
+     strcpy(Datos.Pass,pas.c_str());
+     fflush(stdin);
+     fwrite(&Datos,sizeof(Supervisores),1,Managers);
+     cout<<endl<<"Agregado Exitosamente"<<endl;
+}else
+if(opc2=='A'||opc2=='a'){
+          generador(1);
+           ifstream Archivo;
+
+       string linea;
+        Archivo.open("CLAVES.dat",ios::in|ios::binary);
+          getline(Archivo,linea);
+          cout<<linea<<endl;
+
+     strcpy(Datos.Pass,linea.c_str());fflush(stdin);
+        Archivo.close();
+remove("CLAVES.dat");
+
+     fflush(stdin);
+     fwrite(&Datos,sizeof(Supervisores),1,Managers);
+     cout<<endl<<"Agregado Exitosamente"<<endl;
+}else{
+cout<<"Elija A/M"<<endl;
+getch();
+goto opc22;
+}
+}
+fclose(Managers);
+}
+bool loginAdmins(){
+     fflush(stdin);
+      system("CLS");
+SetConsoleTitle("Login Administrador");
+     char b;
+     char  ch;
+     string PAS = "";
+string US;
+     gotoxy(55, 30);
+     cout << "Login Administrador" << endl;
+     gotoxy(45, 31);
+     cout << "Ingrese el usuario" << endl;
+     gotoxy(45, 32);
+     getline(cin,US);fflush(stdin);
+     gotoxy(45, 33);
+     cout << "Ingrese La Contrasenia " << endl;
+     gotoxy(45, 34);
+     ch = getch();
+     while (ch != 13)
+     {
+          if (ch != 8)
+          {
+               PAS.push_back(ch);
+               cout << "*";
+          }
+          else
+          {
+               if (PAS.length() > 0)
+               {
+                    cout << "\b \b";
+                    PAS = PAS.substr(0, PAS.length() - 1);
+               }
+          }
+          ch = getch();
+     }
+     if ((strcmp(US.c_str(), "admin") == 0) && (PAS == "123"))
+     {
+          gotoxy(45, 17);
+          cout << "Bienvenido ";
+          b = 250;
+          for (int i = 0; i <= 3; i++)
+          {
+               cout << b;
+               Sleep(1000);
+          }
+          Sleep(200);
+            gotoxy(45,17);cout<<"                                                                "<<endl;
+                              gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;fflush(stdin);
+          return true;
+     }
+     if ((strcmp(US.c_str(), "admin") == 1) && (PAS == "123"))
+     {
+          gotoxy(20, 35);
+          cout << "Fallo al inciar sesion Usuario incorrecto porfavor ingrese de nuevo los datos" << endl;
+          getch();
+                    gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;
+          login();
+     }
+     if ((strcmp(US.c_str(), "admin") == 0) && (PAS != "123"))
+     {
+          gotoxy(20, 17);
+          cout << "Fallo al inciar sesion Contrasenia incorrecta porfavor ingrese de nuevo los datos" << endl;
+          getch();
+                                        gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;
+          login();
+     }
+     if ((strcmp(US.c_str(),"admin") == 1) && (PAS != "123"))
+     {
+          gotoxy(20, 17);
+          cout << "Fallo al inciar sesion usuario y contrasenia incorrecta porfavor ingrese de nuevo los datos" << endl;
+          getch();
+                                       gotoxy(55,30);cout<<"                                                                "<<endl;
+                    gotoxy(45,31);cout<<"                                                                "<<endl;
+                    gotoxy(45,32);cout<<"                                                                "<<endl;
+                    gotoxy(45,33);cout<<"                                                                "<<endl;
+                    gotoxy(45,34);cout<<"                                                                "<<endl;
+                    gotoxy(20,35);cout<<"                                                                                     "<<endl;
+          login();
+     }
+     return false;
+}
+void MostrarSupervisores(){
+     system("CLS");
+     int Filas = 6, FilasTotales = 6, encontradomarca = 0;
+     SetConsoleTitle("LISTADO DE SUPERVISORES");
+     Supervisores Datos;
+     bool encontrado=true;
+     FILE *Manager=fopen("Managers.dat","rb");
+     if (Manager == NULL)
+     {
+          cout << " ERROR 001 " << endl;
+          getch();
+          MenuAdmin();
+     }
+     else
+     {
+          fflush(stdin);
+               SetConsoleTitle("REGISTROS");
+                             /*gotoxy(4, 6);
+          cout << EIA << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CT << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDA << endl;
+          gotoxy(4,7);cout<<V;
+               gotoxy(14,7);cout<<"NOMBRE";
+               gotoxy(35,7);cout<<V;
+                gotoxy(43,7);cout<<"DIRECCION";gotoxy(67,7);cout<<V;
+                 gotoxy(81,7);cout<<"TELEFONO";gotoxy(96,7);cout<<V;
+                 gotoxy(115,7);cout<<"USUARIO";gotoxy(134,7);cout<<V;
+
+               gotoxy(4,8);   cout << LTI << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CRUZ << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << LTD << endl;*/
+               fread(&Datos, sizeof(Supervisores), 1, Manager);
+               do
+               {
+     gotoxy(4,Filas);cout<<Datos.nombre<<"\t"<<Datos.Dir<<"\t"<<Datos.Tel<<"\t"<<Datos.usuario<<"\t\t"<<Datos.Pass;
+                         encontrado = true;
+                         Filas++;
+                         FilasTotales++;
+                         encontrado = true;
+                   fread(&Datos, sizeof(Supervisores), 1, Manager);
+               } while (feof(Manager) == 0);
+               if (encontrado == false)
+               {
+                    gotoxy(4,FilasTotales+1); cout << "\n\t\t\t\t\t\t * NO SE ENCUENTRA *" << endl;
+               }
+                             /* gotoxy(4,FilasTotales);   cout << EIB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << CB << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << H << EDB<< endl;¨*/
+}
+fclose(Manager);
+}
+void generador(int ind){
+system("CLS");
+int contador=0;
+ofstream Archivo;
+fflush(stdin);
+Archivo.open("CLAVES.dat",ios::out|ios::binary);
+srand(time(NULL));
+        gotoxy(34,5);cout<<EIA<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<EDA<<endl;
+        while(contador<=5){
+        char mi_letra3 = (char)(rand() % 26 + 'A');
+        char mi_letra4 = (char)(rand() % 26 + 'a');
+        char mi_letra5 = (char)(rand() % 9 + '0');
+        gotoxy(35+(contador*3),6);cout << mi_letra3<<mi_letra4 << mi_letra5;
+        Archivo<<mi_letra3<<mi_letra4<<mi_letra5;
+        contador++;
+        }
+        Archivo<<endl;
+        gotoxy(34,6);cout<<V;gotoxy(83,6);cout<<V;
+         gotoxy(34,7);cout<<EIB<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<H<<EDB<<endl;
+         cout<<"Clave Guardada"<<endl;
+        Archivo.close();
+}
+void EliminarSupervisores(){
+  fflush(stdin);
+Supervisores Datos;
+FILE *Managers=fopen("Managers.dat","a+b");
+FILE *Temporal=fopen("Temporal.dat","a+b");
+fflush(stdin);
+system("CLS");
+string aux;
+cout<<"Ingrese el usuario a Eliminar"<<endl;
+getline(cin,aux);
+fflush(stdin);
+fread(&Datos,sizeof(Supervisores),1,Managers);
+while(!feof(Managers)){
+if(strcmp(aux.c_str(),Datos.usuario)==0){
+     cout<<"Eliminado Correctamente"<<endl;
+     getch();
+}else{
+fwrite(&Datos,sizeof(Supervisores),1,Temporal);
+}
+fread(&Datos,sizeof(Supervisores),1,Managers);
+}
+fclose(Managers);
+fclose(Temporal);
+remove("Managers.dat");
+rename("Temporal.dat","Managers.dat");
+}
+void MenuIngresoProductos(){
+               char opc;
+          SetConsoleTitle("MENU INGRESO DE PRODUCTOS");
+          system("CLS");
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 5);
+               HOR;
+          }
+          for (int a = 5; a <= 6; a++)
+          {
+               gotoxy(9, a);
+               VER
+          }
+          for (int a = 11; a <= 99; a++)
+          {
+               gotoxy(a, 6);
+               PUN;
+          }
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 7);
+               HOR;
+          }
+          gotoxy(41, 6);
+          cout << " M E N U  I N G R E S O  D E  P R O D U C T O S ";
+          for (int a = 5; a <= 6; a++)
+          {
+               gotoxy(110, a);
+               VER
+          }
+          gotoxy(9, 5);
+          cout << TOPE;
+          gotoxy(110, 5);
+          cout << EDA;
+          gotoxy(9, 7);
+          cout << EIB;
+          gotoxy(110, 7);
+          cout << EDB;
+
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 9);
+               HOR;
+          }
+          for (int a = 9; a <= 20; a++)
+          {
+               gotoxy(9, a);
+               VER
+          }
+          for (int a = 10; a <= 101; a++)
+          {
+               gotoxy(a, 20);
+               HOR;
+          }
+          for (int a = 9; a <= 20; a++)
+          {
+               gotoxy(110, a);
+               VER
+          }
+          gotoxy(9, 9);
+          cout << TOPE;
+          gotoxy(110, 9);
+          cout << EDA;
+          gotoxy(9, 20);
+          cout << EIB;
+          gotoxy(110, 20);
+          cout << EDB;
+          for (int a = 10; a <= 19; a++)
+          {
+               gotoxy(35, a);
+               VER
+          }
+          for (int a = 10; a <= 19; a++)
+          {
+               gotoxy(84, a);
+               VER
+          }
+          gotoxy(35, 11);
+          cout << V << " -->   [1] INGRESO MANUAL                       " << V;
+          gotoxy(35, 13);
+          cout << V << " -->   [2] IMPORTACION DE CSV                   " << V;
+          gotoxy(35, 15);
+          ARENBJ;
+          gotoxy(35, 19);
+          ABJ;
+          gotoxy(35, 17);
+          cout << V << "         <-- REGRESAR / ESC. SALIR              " << V;
+          gotoxy(35, 22);
+          opc = getch();
+          if (opc == 8)
+          {
+               MenuInventario();
+          }
+          else
+          {
+               switch (opc)
+               {
+               case '1':
+               {
+                    IngresoProductos();
+                    getch();
+                      MenuIngresoProductos();
+                    break;
+               }
+               case '2':
+               {
+                    loginAdmins();
+                    ImportacionCSV();
+                    getch();
+                     MenuIngresoProductos();
+                    break;
+               }
+
+               case 27:
+               {
+                    exit(0);
+                    break;
+               }
+               default:
+               {
+                    cout << "OPCION INCORRECTA, INGRESE NUEVAMENTE LA OPCION" << endl;
+                    getch();
+                   MenuIngresoProductos();
+                    break;
+               }
+               }
+          }
+}
+void ImportacionCSV(){
+          Productos Producto;
+fstream Archivo;
+system("CLS");
+fflush(stdin);
+	string nombrearchivo;
+ofstream Archivo2;
+Archivo2.open("Productos.dat",ios::out|ios::binary);
+	cout<<"Digite el nombre del archivo csv con su respectiva extencion(.csv) debe de estar en la carpeta : ";
+	getline(cin,nombrearchivo);
+cout<<"En un momento se mostrara la informacion y se escribira en un archivo txt :D"<<endl;
+Sleep(2000);
+string Codigo,nombre,idMarca,PrecioVenta,PrecioCosto,d,m,a;
+string texto;
+Archivo.open(nombrearchivo.c_str(),ios::in);
+    while(getline(Archivo,texto)){
+        stringstream ss(texto);
+        getline(ss,Codigo,';');
+        Producto.CodigoProducto=atoi(Codigo.c_str());
+        fflush(stdin);
+        getline(ss,nombre,';');
+        strcpy(Producto.DescripcionProducto,nombre.c_str());
+        fflush(stdin);
+        getline(ss,idMarca,';');
+          Producto.idMarca=atoi(idMarca.c_str());
+        fflush(stdin);
+        getline(ss,PrecioVenta,';');
+          Producto.PrecioVenta=atof(PrecioVenta.c_str());
+        fflush(stdin);
+        getline(ss,PrecioCosto,';');
+          Producto.PrecioCosto=atof(PrecioCosto.c_str());
+        fflush(stdin);
+        getline(ss,d,'/');
+     Producto.FechaDeIngreso.d=atoi(d.c_str());
+        fflush(stdin);
+         getline(ss,m,'/');
+     Producto.FechaDeIngreso.m=atoi(m.c_str());
+        fflush(stdin);
+         getline(ss,a,'\0');
+     Producto.FechaDeIngreso.a=atoi(a.c_str());
+        fflush(stdin);
+
+    cout<<"Codigo :"<<Codigo<<endl;
+    cout<<"Nombre :"<<nombre<<endl;
+    cout<<"IdMarca :"<<idMarca<<endl;
+     cout<<"Precio Venta :"<<PrecioVenta<<endl;
+    cout<<"Precio Costo :"<<PrecioCosto<<endl;
+    cout<<"Fecha De Ingreso :"<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
+    cout<<"-------------------------------"<<endl;
+Archivo2.write( (char *)&Producto,sizeof(Productos));
+
+    }
+getch();
+Archivo.close();
+Archivo2.close();
+}
+
