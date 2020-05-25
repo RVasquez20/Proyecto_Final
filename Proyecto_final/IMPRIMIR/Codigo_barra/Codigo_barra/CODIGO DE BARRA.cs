@@ -78,7 +78,7 @@ namespace Codigo_barra
             Bitmap bm = new Bitmap(Panel_resultado.BackgroundImage.Width, Panel_resultado.BackgroundImage.Height);
             printFont = new Font("Courier", 9);
             Panel_resultado.DrawToBitmap(bm, new Rectangle(0, 0,Panel_resultado.BackgroundImage.Width, Panel_resultado.BackgroundImage.Height));
-            e.Graphics.DrawImage(bm, 0, 0);
+            e.Graphics.DrawImage(bm, 200, 50);
             StreamReader leer = new StreamReader(@variable);
             string linea;
             int a = 0;

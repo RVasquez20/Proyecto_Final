@@ -1,8 +1,14 @@
 # depslib dependency file v1.0
-1589747626 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
+1590433909 source:c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\main.cpp
 	<librerias.h>
 	<time.h>
 	<fstream>
 	<ctype.h>
 	<iomanip>
+	"SerialClass.h"
+
+1589306071 c:\users\rodrigo vásquez\documents\github\proyecto_final\proyecto_final\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
 

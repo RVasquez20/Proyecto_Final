@@ -1,0 +1,11 @@
+No.Factura 2 	Fecha: 25/5/2020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------
+No.  Codigo 	   Descripcion  	    Subtotal
+1 	 4 	 donas Marca Europa 	 Q. 5.50 
+2 	 4 	 donas Marca Europa 	 Q. 5.50 
+3 	 4 	 donas Marca Europa 	 Q. 5.50 
+---------------------------------------
+Total: Q. 16.50

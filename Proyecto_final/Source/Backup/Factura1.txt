@@ -1,0 +1,14 @@
+No.Factura 1 	Fecha: 25/5/2020
+NIT: 8264080-7
+Cliente: David Mendoza
+Direccion: Saint Phillips Antigua
+--------------------------------------------------------
+No.  Codigo 	   Descripcion  	    Subtotal
+1 	 2 	 pan blanco Marca Bimbo 	 Q. 20.00 
+2 	 1 	 pan en barra Marca Europa 	 Q. 50.00 
+3 	 1 	 pan en barra Marca Europa 	 Q. 50.00 
+4 	 10 	 teclado Marca HP 	 Q. 100.00 
+5 	 10 	 teclado Marca HP 	 Q. 100.00 
+6 	 10 	 teclado Marca HP 	 Q. 100.00 
+---------------------------------------
+Total: Q. 420.00

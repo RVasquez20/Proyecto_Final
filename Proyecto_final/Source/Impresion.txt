@@ -1,0 +1,5 @@
+No.Factura 40 	Fecha: 2552020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------
