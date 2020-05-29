@@ -1,0 +1,8 @@
+No.Factura 37 	Fecha: 28/5/2020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------
+No.  Codigo 	   Descripcion  	    Subtotal
+1 	 1 	 pan en barra Marca Europa 	 Q. 50.00 
+2 	 4 	 donas Marca Europa 	 Q. 5.50 

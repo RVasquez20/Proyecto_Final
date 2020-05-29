@@ -1,0 +1,12 @@
+No.Factura 11 	Fecha: 26/5/2020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------
+No.  Codigo 	   Descripcion  	    Subtotal
+1 	 2 	 pan blanco Marca Bimbo 	 Q. 20.00 
+2 	 4 	 donas Marca Europa 	 Q. 5.50 
+---------------------------------------
+Total: Q. 25.50 
+
+GRACIAS POR SU COMPRA 	BLACK MARCKET :D

@@ -1,0 +1,5 @@
+No.Factura 22 	Fecha: 28/5/2020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------

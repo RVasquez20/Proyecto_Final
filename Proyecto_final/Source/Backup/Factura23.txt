@@ -1,0 +1,5 @@
+No.Factura 23 	Fecha: 28/5/2020
+NIT: 1740184-4
+Cliente: Juan hernandez Corado
+Direccion: antigua
+-------------------------------------------------

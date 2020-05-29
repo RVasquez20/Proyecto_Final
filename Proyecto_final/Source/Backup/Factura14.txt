@@ -1,0 +1,5 @@
+No.Factura 14 	Fecha: 27/5/2020
+NIT: c/f
+Cliente: CONSUMIDOR FINAL
+Direccion: CIUDAD
+-------------------------------------------------

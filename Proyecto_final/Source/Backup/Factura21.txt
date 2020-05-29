@@ -1,0 +1,14 @@
+No.Factura 21 	Fecha: 27/5/2020
+NIT: 1740184-4
+Cliente: Juan hernandez Corado
+Direccion: antigua
+-------------------------------------------------
+No.  Codigo 	   Descripcion  	    Subtotal
+1 	 1 	 pan en barra Marca Europa 	 Q. 50.00 
+2 	 2 	 PAN BLANCO Marca Bimbo 	 Q. 20.00 
+3 	 10 	 teclado Marca HP 	 Q. 100.00 
+4 	 2 	 PAN BLANCO Marca Bimbo 	 Q. 20.00 
+---------------------------------------
+Total: Q. 190.00 
+
+GRACIAS POR SU COMPRA 	BLACK MARCKET :D

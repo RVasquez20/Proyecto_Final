@@ -261,6 +261,7 @@ void generador(int );
 void ImportacionCSV();
 void creditos();
 void ModoBanda();
+void ApagarBanda();
 void Clave(string,string,long long int);
 main()
 {
@@ -278,11 +279,11 @@ main()
     }
     Archivo.close();
 
-
+system("start Inicio.vbs");
 
     gotoxy(40,21);
     cout << "Bienvenidos al Programa Supermercado"<<endl;
-    gotoxy(45,22);
+    gotoxy(43,22);
     cout << "Hecho por Grupo Guido Van Rossum"<<endl;
     gotoxy(50,23);
     cout << "HAL9000 CORP"<<endl;
@@ -296,7 +297,7 @@ main()
     for (int i = 0; i <= 50; i++)
     {
         cout << b;
-        Sleep(200);
+        Sleep(90);
     }
     system("CLS");
 
@@ -463,8 +464,8 @@ void MenuPrincipal()
     }
     case 27:
     {
-        Puerto->WriteData("d",sizeof("d")-1);
-        Puerto->WriteData("b",sizeof("b")-1);
+         system("start Salida.vbs");
+        ApagarBanda();
         gotoxy(7,31);
         exit(0);
         break;
@@ -610,7 +611,8 @@ void MenuMarcas()
             break;
         }
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
             exit(0);
             break;
         }
@@ -1103,7 +1105,9 @@ void MenuInventario()
             break;
         }
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -1555,17 +1559,17 @@ void SearchProductsForName()
     }
     else
     {
+         system("CLS");
         fflush(stdin);
         string aux;
         string nombre;
         bool encontrado = false;
 
         fflush(stdin);
-        cout << "\n\n\n\t\t Ingrese el nombre del producto que buscar" << endl;
-        getline(cin, aux);
+        cout << "\n\n\n\t\t Ingrese el nombre del producto que buscar-> ";
         fflush(stdin);
         Minusculas(aux);
-
+system("CLS");
         SetConsoleTitle("Registros");
 
         for (int a = 10; a <= 100; a++)
@@ -1695,13 +1699,14 @@ void SearchProductsForCode()
     else
     {
 loop:
+     system("CLS");
         fflush(stdin);
         int aux = 0;
         string AUX;
         bool encontrado = false;
         system("CLS");
         fflush(stdin);
-        cout << "\n\n\n\t\t Ingrese el codigo del producto que buscar" << endl;
+        cout << "\n\n\n\t\t Ingrese el codigo del producto que buscar-> ";
         getline(cin,AUX);
         if (VerificadorDeNumeros(AUX))
         {
@@ -1712,7 +1717,7 @@ loop:
             cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
             getch();
             goto loop;
-        }
+        }system("CLS");
         fflush(stdin);
         SetConsoleTitle("Registros");
 
@@ -2065,6 +2070,7 @@ BusquedaDeCodigoParaEliminar:
     string AUX;
     cout << "\n\n\n\t\t CODIGO DEL PRODUCTO QUE DESEA ELIMINAR -> ";
     getline(cin,AUX);
+    fflush(stdin);
     if (VerificadorDeNumeros(AUX))
     {
         AuxCodigoProducto= atoi(AUX.c_str());
@@ -2095,7 +2101,6 @@ BusquedaDeCodigoParaEliminar:
     {
         cout << "\n\n\t\t\t\t\t* NO EXISTE UN PRODUCTO CON ESE CODIGO *" << endl;
         getch();
-        goto BusquedaDeCodigoParaEliminar;
     }
     fclose(ArchivoProductos);
     fclose(Temporal);
@@ -2105,11 +2110,13 @@ BusquedaDeCodigoParaEliminar:
 //-------------------CODIGO DE BARRA-------------------
 void Codigo_barra()
 {
+loop:
+    fflush(stdin);
     system("CLS");
     SetConsoleTitle("CODIGO DE BARRA");
     MostrarProductos();
-    int cp;
-    string AUX;
+    int cp, enc = 0;
+    string AUX="";
     cout << "\n\n\t\tINGRESE EL CODIGO -> ";
     getline(cin,AUX);
     if (VerificadorDeNumeros(AUX))
@@ -2120,18 +2127,21 @@ void Codigo_barra()
     {
         cout << "\n\n\t   * EL INGRESO DE LETRAS ES INCORRECTO  O NUMEROS NEGATIVOS, VALIDO UNICAMENTE NUMEROS POSITIVOS *" << endl;
         getch();
-        Codigo_barra();
+         fflush(stdin);
+        goto loop;
     }
 
     FILE *ArchivoProductos = fopen("Source/Productos.dat", "rb");
 
-    int indice = 0, pos = 0, cod = 0;
+    int indice = 0, pos = 0;
     Productos Producto;
     fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
-    do
+
+    while (!feof(ArchivoProductos))
     {
         if (Producto.CodigoProducto == cp)
         {
+            enc=1;
             ofstream ArchivoProductos;
             ArchivoProductos.open("IMPRIMIR/Codigo_barra/Codigo_barra/bin/Debug/imprimir.txt", ios::out);
             if (ArchivoProductos.fail())
@@ -2159,19 +2169,27 @@ void Codigo_barra()
                 while (feof(ArchivoMarcas) == 0);
                 fclose(ArchivoMarcas);
                 ArchivoProductos << fixed << setprecision(2) << Producto.PrecioVenta;
+
             }
             ArchivoProductos.close();
         }
 
         fread(&Producto, sizeof(Productos), 1, ArchivoProductos);
-        indice += 1;
     }
-    while (feof(ArchivoProductos) == 0);
 
+    if(enc==0)
+    {
+          fflush(stdin);
+        cout<<"No existe"<<endl;
+        getch();
+        fflush(stdin);
+        goto loop;
+    }
+ fflush(stdin);
     fclose(ArchivoProductos);
     system("start IMPRIMIR/Codigo_barra/Codigo_barra/bin/Debug/Codigo_barra.exe");
     system("PAUSE");
-    remove("IMPRIMIR/Codigo_barra/Codigo_barra/bin/Debug/imprimir.txt");
+    // remove("IMPRIMIR/Codigo_barra/Codigo_barra/bin/Debug/imprimir.txt");
 }
 void Clave(string x,string nom,long long int dpi)
 {
@@ -2200,8 +2218,7 @@ void Clave(string x,string nom,long long int dpi)
 void ModoBanda()
 {
     char opc;
-    Puerto->WriteData("d",sizeof("d")-1);
-    Puerto->WriteData("b",sizeof("b")-1);
+    ApagarBanda();
     SetConsoleTitle("MENU MODO DE BANDA");
     system("CLS");
     for (int a = 10; a <= 101; a++)
@@ -2279,10 +2296,10 @@ void ModoBanda()
         VER
     }
     gotoxy(35, 11);
-    cout << V << " -->   [1] MANUAL                  " << V;
+    cout << V << " -->   [1] AUTOMATICO                  ";
+     gotoxy(35, 12);
+    cout << V << " -->   [2] MANUAL                  ";
     gotoxy(35, 13);
-    cout << V << " -->   [2] AUTOMATICO              " << V;
-    gotoxy(35, 15);
     ARENBJ;
     gotoxy(35, 19);
     ABJ;
@@ -2300,15 +2317,15 @@ void ModoBanda()
         {
         case '1':
         {
-            Puerto->WriteData("c",sizeof("c")-1);
+            Puerto->WriteData("a",sizeof("a")-1);
             cout<<"Modo Activado"<<endl;
             getch();
             MenuPrincipal();
             break;
         }
-        case '2':
+                case '2':
         {
-            Puerto->WriteData("a",sizeof("a")-1);
+            Puerto->WriteData("c",sizeof("c")-1);
             cout<<"Modo Activado"<<endl;
             getch();
             MenuPrincipal();
@@ -2316,7 +2333,8 @@ void ModoBanda()
         }
 
         case 27:
-        {
+        {  system("start Salida.vbs");
+             ApagarBanda();
             exit(0);
             break;
         }
@@ -2333,6 +2351,7 @@ void ModoBanda()
 void MenuFacturas()
 {
     char opc;
+     system("color 0A");
     SetConsoleTitle("MENU DE FACTURA");
     system("CLS");
     for (int a = 10; a <= 101; a++)
@@ -2593,6 +2612,7 @@ void Facture()
 
     }
     while (real == false);
+     system("color F0");
     fread(&Cliente, sizeof(Clientes), 1, Clients);
     while (!feof(Clients))
     {
@@ -2616,13 +2636,13 @@ void Facture()
             cout << "Cliente: " << Cliente.NombreCliente << endl;
             cout << "Direccion: " << Cliente.DireccionCliente << endl;
             cout << "--------------------------------------------------" << endl;
-            fprintf(Temporal, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
+            fprintf(Temporal, "No.Factura %d                   Fecha: %d/%d/%d        \n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
             fprintf(Temporal, "NIT: %s\n", Factura.NITFactura);
             fprintf(Temporal, "Cliente: %s\n", Cliente.NombreCliente);
             fprintf(Temporal, "Direccion: %s\n", Cliente.DireccionCliente);
             fprintf(Temporal, "-------------------------------------------------\n");
             ///////////////////////////////////////////////////////////////////////////
-            fprintf(Temporal2, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
+            fprintf(Temporal2, "No.Factura %d                  Fecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
             fprintf(Temporal2, "NIT: %s\n", Factura.NITFactura);
             fprintf(Temporal2, "Cliente: %s\n", Cliente.NombreCliente);
             fprintf(Temporal2, "Direccion: %s\n", Cliente.DireccionCliente);
@@ -2659,13 +2679,13 @@ void Facture()
         cout << "Cliente: " << Cliente.NombreCliente << endl;
         cout << "Direccion: " << Cliente.DireccionCliente << endl;
         cout << "---------------------------------------------------" << endl;
-        fprintf(Temporal, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
+        fprintf(Temporal, "No.Factura %d                   Fecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
         fprintf(Temporal, "NIT: %s\n", Factura.NITFactura);
         fprintf(Temporal, "Cliente: %s\n", Cliente.NombreCliente);
         fprintf(Temporal, "Direccion: %s\n", Cliente.DireccionCliente);
         fprintf(Temporal, "--------------------------------------------------------\n");
         ////////////////////////////////////////////////////////////////////////////////////
-        fprintf(Temporal2, "No.Factura %d \tFecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
+        fprintf(Temporal2, "No.Factura %d                  Fecha: %d/%d/%d\n", Factura.NoFactura, Factura.FechaFactura.d, Factura.FechaFactura.m, Factura.FechaFactura.a);
         fprintf(Temporal2, "NIT: %s\n", Factura.NITFactura);
         fprintf(Temporal2, "Cliente: %s\n", Cliente.NombreCliente);
         fprintf(Temporal2, "Direccion: %s\n", Cliente.DireccionCliente);
@@ -2910,14 +2930,14 @@ loop:
     gotoxy(0, 13 + Contador2);
     cout << "Total: Q." << subtotal << endl;
     gotoxy(0, 14 + Contador2);
-    cout << "GRACIAS POR SU COMPRA \tBLACK MARCKET :D"<< endl;
+    cout << "GRACIAS POR SU COMPRA \t BLACK MARCKET :D"<< endl;
     fprintf(Temporal,"---------------------------------------\n");
-    fprintf(Temporal, "Total: Q. %.2f", subtotal);
-    fprintf(Temporal,"GRACIAS POR SU COMPRA \tBLACK MARCKET :D");
+    fprintf(Temporal, "Total: Q. %.2f\n\n", subtotal);
+    fprintf(Temporal,"GRACIAS POR SU COMPRA \t BLACK MARCKET :D");
 
     fprintf(Temporal2,"---------------------------------------\n");
     fprintf(Temporal2, "Total: Q. %.2f \n\n", subtotal);
-    fprintf(Temporal2,"GRACIAS POR SU COMPRA \tBLACK MARCKET :D");
+    fprintf(Temporal2,"GRACIAS POR SU COMPRA \t BLACK MARCKET :D");
     fclose(Details);
     fclose(Temporal);
     fclose(Temporal2);
@@ -3039,7 +3059,9 @@ void MenuBusquedaCliente()
         }
 
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -3343,7 +3365,9 @@ void MenuBusquedaFactura()
         }
 
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -3694,6 +3718,8 @@ void MenuAyuda()
             {
                 MenuAyuda();
             }
+            getch();
+            MenuAyuda();
             break;
         }
         case '5':
@@ -3703,7 +3729,9 @@ void MenuAyuda()
             break;
         }
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -3870,7 +3898,9 @@ void MenuAdmin()
         }
 
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -3985,6 +4015,7 @@ void Admin()
     system("CLS");
 
 loop:
+     fflush(stdin);
     system("CLS");
     int duplicado=0;
     string us,name,dire,Dpi;
@@ -4039,12 +4070,14 @@ opc22:
         if(opc2=='M'||opc2=='m')
         {
 pass:
+            fflush(stdin);
             string pas="";
             string pas1="";
             char ch1,ch;
             fflush(stdin);
             cout<<"\n\n\t\t Ingrese el password -> ";
             ch = getch();
+            fflush(stdin);
             while (ch != 13)
             {
                 if (ch != 8)
@@ -4061,10 +4094,12 @@ pass:
                     }
                 }
                 ch = getch();
+                fflush(stdin);
             }
             fflush(stdin);
             cout<<"\n\n\t\t Confirme el password -> ";
             ch1 = getch();
+            fflush(stdin);
             while (ch1 != 13)
             {
                 if (ch1 != 8)
@@ -4081,9 +4116,10 @@ pass:
                     }
                 }
                 ch1 = getch();
+                fflush(stdin);
             }
             fflush(stdin);
-            if(strcmp(pas.c_str(),pas1.c_str())==1)
+            if(pas1!=pas)
             {
                 cout<<endl;
                 cout<<"Las contrasenias no coinciden"<<endl;
@@ -4135,13 +4171,15 @@ pass:
 }
 bool loginAdmins()
 {
+loop:
     fflush(stdin);
     system("CLS");
     SetConsoleTitle("Login Administrador");
     char b;
     char  ch;
+    int aprove=0;
     string PAS = "";
-    string US;
+    string US="";
     gotoxy(55, 5);
     cout << "Login Administrador" << endl;
     gotoxy(45, 7);
@@ -4170,8 +4208,9 @@ bool loginAdmins()
         }
         ch = getch();
     }
-    if ((strcmp(US.c_str(), "admin") == 0) && (PAS == "123"))
+    if ((strcmp(US.c_str(), "admin") == 0) && (strcmp(PAS.c_str(), "123") == 0))
     {
+        aprove=1;
         gotoxy(45, 12);
         cout << "Bienvenido ";
         b = 250;
@@ -4198,74 +4237,12 @@ bool loginAdmins()
         fflush(stdin);
         return true;
     }
-    if ((strcmp(US.c_str(), "admin") == 1) && (PAS == "123"))
+    if(aprove==0)
     {
-        gotoxy(20, 35);
-        cout << "Fallo al inciar sesion Usuario incorrecto porfavor ingrese de nuevo los datos" << endl;
-        getch();
-        gotoxy(45,17);
-        cout<<"                                                                "<<endl;
-        gotoxy(55,5);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,7);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,8);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,9);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,10);
-        cout<<"                                                                "<<endl;
-        gotoxy(20,12);
-        cout<<"                                                                                     "<<endl;
-        fflush(stdin);
-        loginAdmins();
+         system("start Error.vbs");
+         Sleep(250);
+        goto loop;
     }
-    if ((strcmp(US.c_str(), "admin") == 0) && (PAS != "123"))
-    {
-        gotoxy(20, 17);
-        cout << "Fallo al inciar sesion Contrasenia incorrecta porfavor ingrese de nuevo los datos" << endl;
-        getch();
-        gotoxy(45,17);
-        cout<<"                                                                "<<endl;
-        gotoxy(55,5);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,7);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,8);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,9);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,10);
-        cout<<"                                                                "<<endl;
-        gotoxy(20,12);
-        cout<<"                                                                                     "<<endl;
-        fflush(stdin);
-        loginAdmins();
-    }
-    if ((strcmp(US.c_str(),"admin") == 1) && (PAS != "123"))
-    {
-        gotoxy(20, 17);
-        cout << "Fallo al inciar sesion usuario y contrasenia incorrecta porfavor ingrese de nuevo los datos" << endl;
-        getch();
-        gotoxy(45,17);
-        cout<<"                                                                "<<endl;
-        gotoxy(55,5);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,7);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,8);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,9);
-        cout<<"                                                                "<<endl;
-        gotoxy(45,10);
-        cout<<"                                                                "<<endl;
-        gotoxy(20,12);
-        cout<<"                                                                                     "<<endl;
-        fflush(stdin);
-        loginAdmins();
-    }
-
-    return false;
 }
 void MostrarSupervisores()
 {
@@ -4541,14 +4518,19 @@ void MenuIngresoProductos()
             {
                 ImportacionCSV();
             }
-
+            else
+            {
+                MenuIngresoProductos();
+            }
             getch();
             MenuIngresoProductos();
             break;
         }
 
         case 27:
-        {
+        {  system("start Salida.vbs");
+            ApagarBanda();
+            gotoxy(7,31);
             exit(0);
             break;
         }
@@ -4584,11 +4566,12 @@ void ImportacionCSV()
     cout << "\n\n Digite el nombre del archivo csv debe de estar en la carpeta -> ";
     getline(cin,nombrearchivo);
     nombrearchivo.append(".csv");
-    cout<<"En un momento se mostrara la informacion y se escribira en un archivo txt :D"<<endl;
+    cout<<"En un momento se mostrara la informacion :D"<<endl;
     Sleep(2000);
     string Codigo,nombre,idMarca,PrecioVenta,PrecioCosto,d,m,a;
     string texto;
     Archivo.open(nombrearchivo.c_str(),ios::in);
+    getline(Archivo,texto);
     while(getline(Archivo,texto))
     {
         stringstream ss(texto);
@@ -4620,8 +4603,8 @@ void ImportacionCSV()
         cout<<"Codigo :"<<Codigo<<endl;
         cout<<"Nombre :"<<nombre<<endl;
         cout<<"IdMarca :"<<idMarca<<endl;
-        cout<<"Precio Venta :"<<PrecioVenta<<endl;
-        cout<<"Precio Costo :"<<PrecioCosto<<endl;
+        cout<<"Precio Venta :Q."<<PrecioVenta<<endl;
+        cout<<"Precio Costo :Q."<<PrecioCosto<<endl;
         cout<<"Fecha De Ingreso :"<<Producto.FechaDeIngreso.d<<"/"<<Producto.FechaDeIngreso.m<<"/"<<Producto.FechaDeIngreso.a<<endl;
         cout<<"-------------------------------"<<endl;
         Archivo2.write( (char *)&Producto,sizeof(Productos));
@@ -4634,7 +4617,7 @@ void ImportacionCSV()
 void creditos()
 {
     system("cls");
-    system("start musicacreditos[1].exe");
+    system("start Creditos.vbs");
     for (int a = 11; a <= 99; a++)
     {
         gotoxy(a, 3);
@@ -4652,4 +4635,9 @@ void creditos()
 
     archivo.close();
     system("pause");
+}
+void ApagarBanda()
+{
+    Puerto->WriteData("d",sizeof("d")-1);
+    Puerto->WriteData("b",sizeof("b")-1);
 }
